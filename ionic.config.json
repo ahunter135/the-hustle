@@ -1,0 +1,7 @@
+{
+  "name": "the-hustle",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
