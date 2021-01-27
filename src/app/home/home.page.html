@@ -1,20 +1,17 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+  <div class="help">
+    <ion-icon name="help-circle-outline" style="font-size: 30px;" color="primary" (click)="showHelp()"></ion-icon>
+  </div>
+  <div class="container">
+    <ion-button (click)="startGame()" expand="block" shape="round">
+      Start Game
+    </ion-button>
+    <br>
+    <br>
+    <ion-input style="" placeholder="Room Code" [(ngModel)]="roomcode" (ionChange)="toUpper()">
+    </ion-input>
+    <ion-button (click)="joinGame(roomcode)" expand="block" shape="round">
+      Join Game
+    </ion-button>
   </div>
 </ion-content>

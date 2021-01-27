@@ -1,0 +1,138 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      The Hustle
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-card *ngIf="playerType == 0 && roomState == 0">
+    <ion-card-header>
+      <ion-card-title>You are the host!</ion-card-title>
+      <ion-card-subtitle>Please let all your players join before hitting begin!</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      Room Code: {{storage.roomid | uppercase}}
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <ion-button color="danger" (click)="cancel()">Cancel</ion-button>
+          </ion-col>
+          <ion-col>
+            <ion-button color="success" (click)="begin()" [disabled]="players.length < 4">Begin</ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+  <ion-card *ngIf="playerType == 0 && roomState == 1">
+    <ion-card-header>
+      <ion-card-subtitle>Question Time</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <span [innerHTML]="activeQuestion.question"></span>
+      <ion-list>
+        <ion-item *ngFor="let q of activeQuestion.answers">
+          <span [ngStyle]="{'background': q == activeQuestion.correct_answer ? '#a5ff9c' : '#FFFFFF'}"
+            [innerHTML]="q"></span>
+        </ion-item>
+      </ion-list>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <ion-button color="success" expand="block" (click)="next()">Next Question</ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+  <ion-card *ngIf="playerType == 1  && roomState == 0">
+    <ion-card-header>
+      <ion-card-title>Waiting for Game to Start</ion-card-title>
+      <ion-card-subtitle>Please enter your name while you wait</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Name</ion-label>
+        <ion-input placeholder="John Doe" [(ngModel)]="playerName" debounce="1000"
+          (ionChange)="updatePlayerName(playerName)">
+        </ion-input>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+  <ion-card *ngIf="playerType == 1  && roomState == 1">
+    <ion-card-header>
+      <ion-card-subtitle>Question Time</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <span [innerHTML]="activeQuestion.question"></span>
+      <ion-list>
+        <ion-item *ngFor="let q of activeQuestion.answers">
+          <span [ngStyle]="{'background': isHustler && q == activeQuestion.correct_answer ? '#a5ff9c' : '#FFFFFF'}"
+            [innerHTML]="q"></span>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+  <ion-card *ngIf="roomState == 2 && playerType == 0">
+    <ion-card-subtitle>Voting Commenced</ion-card-subtitle>
+    <ion-card-content *ngIf="eliminatedPlayer.id">
+      Eliminated Player: <span *ngIf="eliminatedPlayer.name; else elseBlock">{{eliminatedPlayer.name}}</span>
+      <ng-template #elseBlock>{{eliminatedPlayer.id}}</ng-template>
+
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <ion-button color="success" expand="block" (click)="removePlayerThenNext()">Next Question</ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+  <ion-card *ngIf="roomState == 2 && playerType == 1 && !voted">
+    <ion-card-header>
+      <ion-card-subtitle>Players</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item *ngFor="let player of players; let i=index;" button (click)="vote(player, i)"
+        [hidden]="player.id == storage.playerid">
+        <span *ngIf="player.name && player.id != storage.playerid; else elseBlock">{{i + 1}}. {{player.name}}</span>
+        <ng-template #elseBlock>
+          <ng-container *ngIf="player.id != storage.playerid">{{i + 1}}. {{player.id}}</ng-container>
+        </ng-template>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+  <ion-card *ngIf="roomState == 2 && playerType == 1 && voted">
+    <ion-card-header>
+      <ion-card-subtitle>Voting</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      Thanks for voting
+    </ion-card-content>
+  </ion-card>
+  <ion-card *ngIf="roomState != 2">
+    <ion-card-header>
+      <ion-card-subtitle>Players</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item *ngFor="let player of players; let i=index;">
+        <span *ngIf="player.name; else elseBlock"
+          [ngStyle]="{'background': timeToReveal && player.isHustler ? '#a5ff9c' : '#FFFFFF'}">{{i + 1}}.
+          {{player.name}}</span>
+        <ng-template #elseBlock>
+          <span [ngStyle]="{'background': timeToReveal && player.isHustler ? '#a5ff9c' : '#FFFFFF'}">{{i + 1}}.
+            {{player.id}}</span></ng-template>
+      </ion-item>
+      <ion-grid *ngIf="playerType == 0 && roomState == 3">
+        <ion-row>
+          <ion-col>
+            <ion-button expand="block" color="success" (click)="revealHustler()" [hidden]="timeToReveal">Reveal Hustler
+            </ion-button>
+            <ion-button expand="block" color="success" (click)="cancel()">Exit</ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

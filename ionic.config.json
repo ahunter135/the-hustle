@@ -1,7 +1,10 @@
 {
   "name": "the-hustle",
   "integrations": {
-    "capacitor": {}
+    "capacitor": {
+      "enabled": false
+    },
+    "cordova": {}
   },
   "type": "angular"
 }
