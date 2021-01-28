@@ -1,5 +1,10 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="cancel()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
     <ion-title>
       The Hustle
     </ion-title>
@@ -41,6 +46,11 @@
         <ion-row>
           <ion-col>
             <ion-button color="success" expand="block" (click)="next()">Next Question</ion-button>
+          </ion-col>
+          <ion-col>
+            <ion-button color="light" expand="block" (click)="startTimer()" *ngIf="!timerStarted">Start Timer
+            </ion-button>
+            <ion-button color="light" expand="block" (click)="resetTimer()" *ngIf="timerStarted">{{time}}</ion-button>
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -134,5 +144,23 @@
         </ion-row>
       </ion-grid>
     </ion-card-content>
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-subtitle>Live Chat</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content style="min-height: 150px; max-height: 150px; overflow: scroll">
+      <div *ngFor="let message of messages" style="padding-bottom: 5px;" class="message-list">
+        {{message.sender}}:<br>
+        {{message.text}}
+      </div>
+    </ion-card-content>
+    <ion-item lines="none" style="padding: 0;">
+      <ion-input placeholder="Message..." style="overflow-wrap: break-word; width: 100%;" [(ngModel)]="text">
+      </ion-input>
+      <ion-button fill="clear" style="width: 30px" (click)="sendMessage(text)">
+        <ion-icon slot="icon-only" name="paper-plane-outline" style="height: 100%; width: 100%;"></ion-icon>
+      </ion-button>
+    </ion-item>
   </ion-card>
 </ion-content>

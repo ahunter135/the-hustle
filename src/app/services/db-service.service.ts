@@ -25,7 +25,8 @@ export class DbServiceService {
       players: [],
       activeQuestion: {},
       state: 0,
-      timeToReveal: false
+      timeToReveal: false,
+      messages: [{text: 'Please wait and talk amongst yourselves', sender: 'HOST'}]
     });
     this.unsubscribe = this.db.collection("rooms").doc(roomid)
     .onSnapshot(function(doc) {
@@ -102,6 +103,15 @@ export class DbServiceService {
   async updateRoomToReveal(roomid) {
     return await this.db.collection('rooms').doc(roomid).update({
       timeToReveal: true
+    })
+  }
+
+  async sendMessage(roomid, text) {
+    let roomData = await this.db.collection('rooms').doc(roomid).get();
+    let messages = roomData.data().messages;
+    messages.push(text);
+    return await this.db.collection('rooms').doc(roomid).update({
+      messages: messages
     })
   }
 

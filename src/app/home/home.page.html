@@ -8,9 +8,9 @@
     </ion-button>
     <br>
     <br>
-    <ion-input style="" placeholder="Room Code" [(ngModel)]="roomcode" (ionChange)="toUpper()">
+    <ion-input placeholder="Room Code" [(ngModel)]="roomcode" (ionChange)="toUpper()">
     </ion-input>
-    <ion-button (click)="joinGame(roomcode)" expand="block" shape="round">
+    <ion-button (click)="joinGame(roomcode)" expand="block" shape="round" [disabled]="!roomcode || roomcode.length < 4">
       Join Game
     </ion-button>
   </div>

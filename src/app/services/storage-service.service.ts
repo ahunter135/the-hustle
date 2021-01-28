@@ -74,6 +74,9 @@ export class StorageServiceService {
     return await this.dbService.updateRoomToReveal(this.roomid)
   }
 
+  async sendMessage(text) {
+    return await this.dbService.sendMessage(this.roomid, text);
+  }
   generateUID() {
     // I generate the UID from two parts here 
     // to ensure the random number provide enough bits.

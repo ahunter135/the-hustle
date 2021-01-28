@@ -26,6 +26,11 @@ export class GameScreenPage implements OnInit {
   voted = false;
   eliminatedPlayer = <any>{};
   timeToReveal = false;
+  timerStarted = false;
+  time = 60;
+  interval;
+  messages = [];
+  text = "";
   constructor(public dbService: DbServiceService, private globalService: GlobalService, public storage:StorageServiceService,
     private router: Router, private loadingCtrl: LoadingController) { }
 
@@ -64,6 +69,10 @@ export class GameScreenPage implements OnInit {
       if (data.value.timeToReveal) {
         this.timeToReveal = true;
       }
+
+      if (data.value.messages) {
+        this.messages = data.value.messages;
+      }
       
     });
 
@@ -99,7 +108,18 @@ export class GameScreenPage implements OnInit {
   }
 
   async cancel() {
+    if (this.playerType == 0)
     await this.storage.deleteRoom();
+    else {
+      for (let i = 0; i < this.players.length; i++) {
+        if (this.players[i].id == this.storage.playerid) {
+          this.players.splice(i, 1);
+          break;
+        }
+      }
+      this.eliminatedPlayer = <any>{};
+      await this.storage.updateRoomPlayers(this.players, this.eliminatedPlayer);
+    }
   }
 
   async presentLoader() {
@@ -157,7 +177,7 @@ export class GameScreenPage implements OnInit {
         break;
       }
     }
-
+    this.eliminatedPlayer = <any>{};
     await this.storage.updateRoomPlayers(this.players, this.eliminatedPlayer);
     await this.storage.updateRoomState(1);
     this.activeIndex++;
@@ -169,6 +189,29 @@ export class GameScreenPage implements OnInit {
 
   async revealHustler() {
     await this.storage.updateRoomToReveal();
+  }
+
+  async startTimer() {
+    this.timerStarted = true;
+    this.interval = setInterval(() => {
+      this.time--;
+      if (this.time <= 0) this.resetTimer();
+    }, 1000);
+  }
+
+  async resetTimer() {
+    this.time = 60;
+    this.timerStarted = false;
+    clearInterval(this.interval);
+  }
+
+  async sendMessage(text) {
+    let obj = {
+      text: text,
+      sender: this.playerType == 1 ? this.playerName ? this.playerName : this.storage.playerid : 'HOST'
+    }
+    await this.storage.sendMessage(obj);
+    this.text = "";
   }
 
   shuffle(array) {
