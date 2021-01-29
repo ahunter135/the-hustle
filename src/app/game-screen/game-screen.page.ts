@@ -31,6 +31,7 @@ export class GameScreenPage implements OnInit {
   interval;
   messages = [];
   text = "";
+  numQuestions = "2";
   constructor(public dbService: DbServiceService, private globalService: GlobalService, public storage:StorageServiceService,
     private router: Router, private loadingCtrl: LoadingController) { }
 
@@ -86,7 +87,7 @@ export class GameScreenPage implements OnInit {
   async begin() {
     await this.presentLoader();
     //Game has started
-    let questions = await this.storage.getQuestions((this.players.length  - 2) * 2);
+    let questions = await this.storage.getQuestions((this.players.length  - 2) * +this.numQuestions);
     let temp = <any>[];
     if (questions.response_code == 0) {
       temp = questions.results;
@@ -135,7 +136,7 @@ export class GameScreenPage implements OnInit {
   }
 
   async next() {
-    if (this.activeIndex % 2 == 1) {
+    if ((this.activeIndex + 1) % +this.numQuestions == 0 && this.activeIndex != 0) {
       // it's been 2 questions time to vote
       if (this.players.length == 3) {
         // Game is over

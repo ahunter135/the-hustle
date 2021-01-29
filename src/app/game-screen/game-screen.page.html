@@ -21,6 +21,20 @@
       <ion-grid>
         <ion-row>
           <ion-col>
+            <ion-item style="padding: 0;">
+              <ion-label>Questions Per Round</ion-label>
+              <ion-select [(ngModel)]="numQuestions" value="numQuestions">
+                <ion-select-option value="1">1</ion-select-option>
+                <ion-select-option value="2">2</ion-select-option>
+                <ion-select-option value="3">3</ion-select-option>
+                <ion-select-option value="4">4</ion-select-option>
+                <ion-select-option value="5">5</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
             <ion-button color="danger" (click)="cancel()">Cancel</ion-button>
           </ion-col>
           <ion-col>
@@ -158,7 +172,7 @@
     <ion-item lines="none" style="padding: 0;">
       <ion-input placeholder="Message..." style="overflow-wrap: break-word; width: 100%;" [(ngModel)]="text">
       </ion-input>
-      <ion-button fill="clear" style="width: 30px" (click)="sendMessage(text)">
+      <ion-button fill="clear" style="width: 30px" (click)="sendMessage(text)" [disabled]="!text">
         <ion-icon slot="icon-only" name="paper-plane-outline" style="height: 100%; width: 100%;"></ion-icon>
       </ion-button>
     </ion-item>
