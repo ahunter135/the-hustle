@@ -22,7 +22,6 @@ export class HomePage {
   }
 
   async startGame() {
-    this.admob.setDevMode(false);
     await this.storage.createHostUser();
     this.storage.playerType = 0;
     this.router.navigateByUrl("/game-screen", {
