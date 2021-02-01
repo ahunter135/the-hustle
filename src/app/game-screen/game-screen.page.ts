@@ -1,3 +1,4 @@
+import { AdMob } from '@admob-plus/ionic';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoadingController, Platform } from '@ionic/angular';
@@ -33,7 +34,7 @@ export class GameScreenPage implements OnInit {
   text = "";
   numQuestions = "2";
   constructor(public dbService: DbServiceService, private globalService: GlobalService, public storage:StorageServiceService,
-    private router: Router, private loadingCtrl: LoadingController, private admob: AdMobFree, private platform: Platform) { }
+    private router: Router, private loadingCtrl: LoadingController, private admob: AdMob, private platform: Platform) { }
 
   ngOnInit() {
     if (this.platform.is('ios')) {
