@@ -4,6 +4,7 @@ import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { DbServiceService } from './services/db-service.service';
+import { AdMob } from '@admob-plus/ionic';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,8 @@ export class AppComponent {
     private platform: Platform,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
-    private dbService: DbServiceService
+    private dbService: DbServiceService,
+    private admob: AdMob
   ) {
     this.initializeApp();
   }
@@ -24,7 +26,12 @@ export class AppComponent {
     this.platform.ready().then(async () => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
-
+      this.admob.banner.show({
+        id: {
+          ios: "ca-app-pub-7853858495093513/2510882577",
+          android: "ca-app-pub-7853858495093513/6641699272"
+        }
+      });
       this.dbService.setupDBConnection();
     });
   }

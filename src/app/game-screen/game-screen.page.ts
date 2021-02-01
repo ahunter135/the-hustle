@@ -37,16 +37,6 @@ export class GameScreenPage implements OnInit {
     private router: Router, private loadingCtrl: LoadingController, private admob: AdMob, private platform: Platform) { }
 
   ngOnInit() {
-    if (this.platform.is('ios')) {
-      this.admob.interstitial.load({
-        id: 'ca-app-pub-7853858495093513/3151818890'
-      });
-    } else {
-      this.admob.interstitial.load({
-        id: 'ca-app-pub-7853858495093513/2510882577'
-      });
-    }    
-
     this.globalService.getObservable().subscribe(async (data) => {
       if (data.value == null) {
         if (!this.platform.is('cordova')) {
@@ -135,8 +125,16 @@ export class GameScreenPage implements OnInit {
   }
 
   async cancel() {
+    this.admob.interstitial.load({
+      id: {
+        android: 'ca-app-pub-7853858495093513/2510882577',
+        ios: 'ca-app-pub-7853858495093513/3151818890'
+      }
+    }).then((res) => {
+      this.admob.interstitial.show();
+    });
     if (this.playerType == 0)
-    await this.storage.deleteRoom();
+      await this.storage.deleteRoom();
     else {
       for (let i = 0; i < this.players.length; i++) {
         if (this.players[i].id == this.storage.playerid) {

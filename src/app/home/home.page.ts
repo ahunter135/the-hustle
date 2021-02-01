@@ -18,19 +18,11 @@ export class HomePage {
   async ngOnInit() {
     let notif = await this.storage.getNotification();
     this.notification = notif.data();
-
-    if (this.platform.is('ios')) {
-      this.admob.banner.show({
-        id: "ca-app-pub-7853858495093513/2510882577"
-      });
-    } else {
-      this.admob.banner.show({
-        id: "ca-app-pub-7853858495093513/6641699272"
-      });
-    }
+// ios
   }
 
   async startGame() {
+    this.admob.setDevMode(false);
     await this.storage.createHostUser();
     this.storage.playerType = 0;
     this.router.navigateByUrl("/game-screen", {
