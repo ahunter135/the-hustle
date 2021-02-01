@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AdMobFree } from '@ionic-native/admob-free/ngx';
 import { LoadingController, Platform } from '@ionic/angular';
 import { DbServiceService } from '../services/db-service.service';
 import { GlobalService } from '../services/global.service';
@@ -38,12 +37,12 @@ export class GameScreenPage implements OnInit {
 
   ngOnInit() {
     if (this.platform.is('ios')) {
-      this.admob.banner.config({
-        id: 'interca-app-pub-7853858495093513/3151818890'
+      this.admob.interstitial.load({
+        id: 'ca-app-pub-7853858495093513/3151818890'
       });
     } else {
-      this.admob.interstitial.config({
-        id: 'ca-app-pub-7853858495093513/7091063908'
+      this.admob.interstitial.load({
+        id: 'ca-app-pub-7853858495093513/2510882577'
       });
     }    
 
@@ -54,12 +53,10 @@ export class GameScreenPage implements OnInit {
             replaceUrl: true
           });
         }
-        this.admob.interstitial.prepare().then(() => {
           this.admob.interstitial.show();
           this.router.navigateByUrl("/home", {
             replaceUrl: true
           });
-        }); 
         return;
       }
       this.players = data.value.players;
@@ -84,12 +81,10 @@ export class GameScreenPage implements OnInit {
             replaceUrl: true
           });
         }
-        this.admob.interstitial.prepare().then(() => {
           this.admob.interstitial.show();
           this.router.navigateByUrl("/home", {
             replaceUrl: true
           });
-        }); 
         return;
       }
 
