@@ -14,6 +14,10 @@ export class StorageServiceService {
   playerType;
   constructor(private dbService: DbServiceService, public http: HttpClient) { }
 
+  async getNotification() {
+    return await this.dbService.getNotification();
+  }
+  
   async createHostUser() {
     this.hostid = this.generateUID();
     this.roomid = this.generateUID();

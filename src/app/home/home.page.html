@@ -1,7 +1,13 @@
 <ion-content [fullscreen]="true">
+  <div class="banner" color="primary">
+    <p>{{notification.message}}</p>
+  </div>
   <div class="help">
     <ion-icon name="help-circle-outline" style="font-size: 30px;" color="primary" (click)="showHelp()"></ion-icon>
   </div>
+  <span class="logo">
+    The<br>Hustle
+  </span>
   <div class="container">
     <ion-button (click)="startGame()" expand="block" shape="round">
       Start Game

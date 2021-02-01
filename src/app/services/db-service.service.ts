@@ -18,6 +18,10 @@ export class DbServiceService {
     this.db = firebase.firestore();
   }
 
+  async getNotification() {
+    return await this.db.collection('notification').doc("1").get();
+  }
+
   async createRoom(roomid, hostid) {
     console.log(roomid);
     await this.db.collection('rooms').doc(roomid).set({

@@ -4,7 +4,9 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 50%;
+  top: 70%;
+  padding-left: 25px;
+  padding-right: 25px;
   transform: translateY(-50%);
 }
 
@@ -28,6 +30,45 @@
 
 .help {
   position: absolute;
-  top: 5%;
+  top: 15%;
   right: 5%;
+}
+
+.banner {
+  min-height: 75px;
+  max-height: 100px;
+  top: 15px;
+  position: absolute;
+  width: 100%;
+  color: black;
+
+  p {
+    text-align: center;
+  }
+}
+
+.logo {
+  font-size: 70px;
+  text-align: center;
+  color: #645f52;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 33%;
+  transform: translateY(-50%);
+  font-family: 'metro';
+  filter: drop-shadow(0 0 0.5px #645f52)
+}
+ 
+ion-content {
+  --ion-background-color: #efe0bb;
+}
+
+ion-button {
+  font-family: 'molle';
+  font-size: 17px;
+}
+ion-input {
+  font-family: 'molle';
+  font-size: 14px;
 }

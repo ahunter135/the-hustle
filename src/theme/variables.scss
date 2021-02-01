@@ -4,15 +4,15 @@
 /** Ionic CSS Variables **/
 :root {
   /** primary **/
-  --ion-color-primary: #3880ff;
+  --ion-color-primary: #645f52;
   --ion-color-primary-rgb: 56, 128, 255;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #3171e0;
-  --ion-color-primary-tint: #4c8dff;
+  --ion-color-primary-shade: #645f52;
+  --ion-color-primary-tint: #645f52;
 
   /** secondary **/
-  --ion-color-secondary: #3dc2ff;
+  --ion-color-secondary: #efe0bb;
   --ion-color-secondary-rgb: 61, 194, 255;
   --ion-color-secondary-contrast: #ffffff;
   --ion-color-secondary-contrast-rgb: 255, 255, 255;
@@ -28,7 +28,7 @@
   --ion-color-tertiary-tint: #6370ff;
 
   /** success **/
-  --ion-color-success: #2dd36f;
+  --ion-color-success: #09540b;
   --ion-color-success-rgb: 45, 211, 111;
   --ion-color-success-contrast: #ffffff;
   --ion-color-success-contrast-rgb: 255, 255, 255;
@@ -44,7 +44,7 @@
   --ion-color-warning-tint: #ffca22;
 
   /** danger **/
-  --ion-color-danger: #eb445a;
+  --ion-color-danger: #7c2a1d;
   --ion-color-danger-rgb: 235, 68, 90;
   --ion-color-danger-contrast: #ffffff;
   --ion-color-danger-contrast-rgb: 255, 255, 255;
@@ -229,4 +229,35 @@
 
     --ion-card-background: #1e1e1e;
   }
+}
+
+@font-face {
+  font-family: 'metro';
+  font-style: normal;
+  font-weight: normal;
+  src: url('../assets/fonts/metro.ttf');
+}
+@font-face {
+  font-family: 'molle';
+  font-style: normal;
+  font-weight: normal;
+  src: url('../assets/fonts/Molle.ttf');
+}
+@font-face {
+  font-family: 'cormorant';
+  font-style: normal;
+  font-weight: normal;
+  src: url('../assets/fonts/cormorant.ttf');
+}
+@font-face {
+  font-family: 'dukas';
+  font-style: normal;
+  font-weight: normal;
+  src: url('../assets/fonts/dukas.ttf');
+}
+@font-face {
+  font-family: 'pica';
+  font-style: normal;
+  font-weight: normal;
+  src: url('../assets/fonts/pica.ttf');
 }

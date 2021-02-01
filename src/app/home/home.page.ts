@@ -10,9 +10,14 @@ import { StorageServiceService } from '../services/storage-service.service';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
-  
+  notification = <any>{};
   roomcode;
   constructor(private storage: StorageServiceService, private router: Router, private modalCtrl: ModalController) {}
+
+  async ngOnInit() {
+    let notif = await this.storage.getNotification();
+    this.notification = notif.data();
+  }
 
   async startGame() {
     await this.storage.createHostUser();

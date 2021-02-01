@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoadingController } from '@ionic/angular';
+import { AdMobFree } from '@ionic-native/admob-free/ngx';
+import { LoadingController, Platform } from '@ionic/angular';
 import { DbServiceService } from '../services/db-service.service';
 import { GlobalService } from '../services/global.service';
 import { StorageServiceService } from '../services/storage-service.service';
@@ -33,14 +34,32 @@ export class GameScreenPage implements OnInit {
   text = "";
   numQuestions = "2";
   constructor(public dbService: DbServiceService, private globalService: GlobalService, public storage:StorageServiceService,
-    private router: Router, private loadingCtrl: LoadingController) { }
+    private router: Router, private loadingCtrl: LoadingController, private admob: AdMobFree, private platform: Platform) { }
 
   ngOnInit() {
+    if (this.platform.is('ios')) {
+      this.admob.banner.config({
+        id: 'interca-app-pub-7853858495093513/3151818890'
+      });
+    } else {
+      this.admob.interstitial.config({
+        id: 'ca-app-pub-7853858495093513/7091063908'
+      });
+    }    
+
     this.globalService.getObservable().subscribe(async (data) => {
       if (data.value == null) {
-        this.router.navigateByUrl('/home', {
-          replaceUrl: true
-        });
+        if (!this.platform.is('cordova')) {
+          this.router.navigateByUrl("/home", {
+            replaceUrl: true
+          });
+        }
+        this.admob.interstitial.prepare().then(() => {
+          this.admob.interstitial.show();
+          this.router.navigateByUrl("/home", {
+            replaceUrl: true
+          });
+        }); 
         return;
       }
       this.players = data.value.players;
@@ -60,7 +79,18 @@ export class GameScreenPage implements OnInit {
       }
 
       if (!playerFound && !this.storage.hostid) {
-        this.router.navigateByUrl("/home");
+        if (!this.platform.is('cordova')) {
+          this.router.navigateByUrl("/home", {
+            replaceUrl: true
+          });
+        }
+        this.admob.interstitial.prepare().then(() => {
+          this.admob.interstitial.show();
+          this.router.navigateByUrl("/home", {
+            replaceUrl: true
+          });
+        }); 
+        return;
       }
 
       if (data.value.eliminatedPlayer) {
