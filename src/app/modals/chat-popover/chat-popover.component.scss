@@ -1,0 +1,8 @@
+.message-list {
+    overflow: hidden;
+  overflow-y: auto;
+  color: white;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}

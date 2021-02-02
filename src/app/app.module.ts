@@ -12,6 +12,7 @@ import firebase from 'firebase';
 import { HttpClientModule } from '@angular/common/http';
 import { AdMob } from '@admob-plus/ionic';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
+import { Clipboard } from '@ionic-native/clipboard/ngx';
 
 var firebaseConfig = {
   apiKey: "AIzaSyCLTnNoAXOI3E13j_doKmRFM8gpkTl4yBM",
@@ -36,6 +37,7 @@ firebase.initializeApp(firebaseConfig);
     SplashScreen,
     AdMob,
     Keyboard,
+    Clipboard,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

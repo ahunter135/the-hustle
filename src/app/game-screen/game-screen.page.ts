@@ -1,10 +1,12 @@
 import { AdMob } from '@admob-plus/ionic';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoadingController, Platform } from '@ionic/angular';
+import { LoadingController, ModalController, Platform, PopoverController, ToastController } from '@ionic/angular';
 import { DbServiceService } from '../services/db-service.service';
 import { GlobalService } from '../services/global.service';
 import { StorageServiceService } from '../services/storage-service.service';
+import { Clipboard } from '@ionic-native/clipboard/ngx';
+import { ChatPopoverComponent } from '../modals/chat-popover/chat-popover.component';
 
 @Component({
   selector: 'app-game-screen',
@@ -17,6 +19,7 @@ export class GameScreenPage implements OnInit {
   playerName;
   roomState = 0;
   loader;
+  isPrivate = true;
   questions;
   activeIndex = 0;
   activeQuestion = <any>{
@@ -34,7 +37,8 @@ export class GameScreenPage implements OnInit {
   text = "";
   numQuestions = "2";
   constructor(public dbService: DbServiceService, private globalService: GlobalService, public storage:StorageServiceService,
-    private router: Router, private loadingCtrl: LoadingController, private admob: AdMob, private platform: Platform) { }
+    private router: Router, private loadingCtrl: LoadingController, private admob: AdMob, private platform: Platform,
+    private toastCtrl: ToastController, private clipboard: Clipboard, private modalCtrl: ModalController) { }
 
   ngOnInit() {
     this.globalService.getObservable().subscribe(async (data) => {
@@ -43,8 +47,19 @@ export class GameScreenPage implements OnInit {
           this.router.navigateByUrl("/home", {
             replaceUrl: true
           });
+          return
         }
+        this.admob.interstitial.load({
+          id: {
+            android: 'ca-app-pub-7853858495093513/7091063908',
+            ios: 'ca-app-pub-7853858495093513/3151818890'
+          }
+        }).then((res) => {
+          console.log(res);
           this.admob.interstitial.show();
+        }, (reason) => {
+          console.log(reason);
+        });
           this.router.navigateByUrl("/home", {
             replaceUrl: true
           });
@@ -71,11 +86,22 @@ export class GameScreenPage implements OnInit {
           this.router.navigateByUrl("/home", {
             replaceUrl: true
           });
+          return
         }
+        this.admob.interstitial.load({
+          id: {
+            android: 'ca-app-pub-7853858495093513/7091063908',
+            ios: 'ca-app-pub-7853858495093513/3151818890'
+          }
+        }).then((res) => {
+          console.log(res);
           this.admob.interstitial.show();
-          this.router.navigateByUrl("/home", {
-            replaceUrl: true
-          });
+        }, (reason) => {
+          console.log(reason);
+        });
+        this.router.navigateByUrl("/home", {
+          replaceUrl: true
+        });
         return;
       }
 
@@ -125,14 +151,6 @@ export class GameScreenPage implements OnInit {
   }
 
   async cancel() {
-    this.admob.interstitial.load({
-      id: {
-        android: 'ca-app-pub-7853858495093513/2510882577',
-        ios: 'ca-app-pub-7853858495093513/3151818890'
-      }
-    }).then((res) => {
-      this.admob.interstitial.show();
-    });
     if (this.playerType == 0)
       await this.storage.deleteRoom();
     else {
@@ -233,10 +251,47 @@ export class GameScreenPage implements OnInit {
   async sendMessage(text) {
     let obj = {
       text: text,
-      sender: this.playerType == 1 ? this.playerName ? this.playerName : this.storage.playerid : 'HOST'
+      sender: this.playerType == 1 ? this.playerName ? this.playerName : this.storage.playerid : 'Host'
     }
     await this.storage.sendMessage(obj);
     this.text = "";
+  }
+
+  async updateRoomPrivacy() {
+    await this.storage.updateRoomPrivacy(this.isPrivate);
+  }
+
+  async remove(index) {
+    this.players.splice(index, 1);
+
+    this.eliminatedPlayer = <any>{};
+    await this.storage.updateRoomPlayers(this.players, this.eliminatedPlayer);
+  }
+
+  async copyToClipboard() {
+    this.clipboard.copy(this.storage.roomid);
+    await this.showToast("Room code copied to clipboard!");
+  }
+
+  async showToast(message) {
+    const toast = await this.toastCtrl.create({
+      message: message,
+      position: 'bottom',
+      duration: 2000
+    });
+
+    toast.present();
+  }
+
+  async popoutChat(ev: any) {
+    const popover = await this.modalCtrl.create({
+      component: ChatPopoverComponent,
+      componentProps: {
+        data: this.messages
+      },
+      cssClass: 'chatpopover'
+    });
+    return await popover.present();
   }
 
   shuffle(array) {

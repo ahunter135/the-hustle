@@ -5,25 +5,30 @@
         <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title color="dark">
+    <ion-title color="dark" style="font-family: 'metro';">
       The Hustle
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="copyToClipboard()" color="dark">
+        <ion-icon slot="icon-only" name="share-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content class="background">
+  <!-- Lobby & Question blocks -->
   <ion-card *ngIf="playerType == 0 && roomState == 0" color="primary">
     <ion-card-header>
-      <ion-card-title>You are the host!</ion-card-title>
-      <ion-card-subtitle>Please let all your players join before hitting begin!
-      </ion-card-subtitle>
+      <ion-card-title style="font-family: 'molle';">You are the host!</ion-card-title>
     </ion-card-header>
-    <ion-card-content style="font-family: 'cormorant' !important">
-      Room Code: {{storage.roomid | uppercase}}
+    <ion-card-content style="font-family: 'pica' !important">
+      <div>Please let all your players join before hitting begin!</div>
+      <span class="roomcode">Room Code: {{storage.roomid | uppercase}}</span>
       <ion-grid>
         <ion-row>
           <ion-col>
             <ion-item style="padding: 0;" color="primary">
-              <ion-label>Questions Per Round</ion-label>
+              <ion-label style="font-family: 'pica' !important;">Questions Per Round</ion-label>
               <ion-select [(ngModel)]="numQuestions" value="numQuestions">
                 <ion-select-option value="1">1</ion-select-option>
                 <ion-select-option value="2">2</ion-select-option>
@@ -34,6 +39,10 @@
             </ion-item>
           </ion-col>
         </ion-row>
+        <ion-item style="padding: 0;" color="primary">
+          <ion-label style="font-family: 'pica' !important; ">Private</ion-label>
+          <ion-toggle color="secondary" [(ngModel)]="isPrivate" (ionChange)="updateRoomPrivacy()"></ion-toggle>
+        </ion-item>
         <ion-row>
           <ion-col>
             <ion-button expand="block" color="danger" (click)="cancel()">Cancel</ion-button>
@@ -74,10 +83,10 @@
   </ion-card>
   <ion-card *ngIf="playerType == 1  && roomState == 0" color="primary">
     <ion-card-header>
-      <ion-card-title>Waiting for Game to Start</ion-card-title>
-      <ion-card-subtitle>Please enter your name while you wait</ion-card-subtitle>
+      <ion-card-title style="font-family: 'molle';">Waiting for Game to Start</ion-card-title>
     </ion-card-header>
     <ion-card-content>
+      <div>Please enter your name while you wait.</div>
       <ion-item color="primary">
         <ion-label position="stacked">Name</ion-label>
         <ion-input placeholder="John Doe" [(ngModel)]="playerName" debounce="1000"
@@ -101,6 +110,8 @@
       </ion-list>
     </ion-card-content>
   </ion-card>
+
+  <!-- Begin voting blocks -->
   <ion-card *ngIf="roomState == 2 && playerType == 0" color="primary">
     <ion-card-header>
       <ion-card-subtitle>Voting Commenced</ion-card-subtitle>
@@ -140,6 +151,9 @@
       Thanks for voting
     </ion-card-content>
   </ion-card>
+  <!-- End voting blocks-->
+
+  <!-- Player list -->
   <ion-card *ngIf="roomState != 2" color="primary">
     <ion-card-header>
       <ion-card-subtitle>Players</ion-card-subtitle>
@@ -153,6 +167,10 @@
           <span
             [ngStyle]="{'background': timeToReveal && player.isHustler ? 'var(--ion-color-success)' : ''}">{{i + 1}}.
             {{player.id}}</span></ng-template>
+        <ion-button (click)="remove(i)" slot="end">
+          <ion-icon *ngIf="roomState == 0 && playerType == 0" slot="icon-only" name="close-circle" color="secondary">
+          </ion-icon>
+        </ion-button>
       </ion-item>
       <ion-grid *ngIf="playerType == 0 && roomState == 3">
         <ion-row>
@@ -165,21 +183,28 @@
       </ion-grid>
     </ion-card-content>
   </ion-card>
+
+  <!-- Chat -->
   <ion-card color="primary">
     <ion-card-header>
-      <ion-card-subtitle>Live Chat</ion-card-subtitle>
+      <ion-card-subtitle>Live Chat
+        <ion-icon (click)="popoutChat($event)" name="arrow-redo" style="color: white; float: right; font-size: 18px;">
+        </ion-icon>
+      </ion-card-subtitle>
     </ion-card-header>
     <ion-card-content style="min-height: 150px; max-height: 150px; overflow: scroll">
       <div *ngFor="let message of messages" style="padding-bottom: 5px;" class="message-list">
-        <span style="font-family: 'cormorant' !important">{{message.sender}}:</span><br>
-        <span style="font-family: 'dukas' !important">{{message.text}}</span>
+        <span>{{message.sender}}:</span><br>
+        <span>{{message.text}}</span>
       </div>
     </ion-card-content>
     <ion-item lines="none" style="padding: 0;" color="primary">
-      <ion-input placeholder="Message..." style="overflow-wrap: break-word; width: 100%;" [(ngModel)]="text">
+      <ion-input placeholder="Message..." style="overflow-wrap: break-word; width: 100%; font-family: 'dukas';"
+        [(ngModel)]="text">
       </ion-input>
       <ion-button fill="clear" style="width: 30px" (click)="sendMessage(text)" [disabled]="!text">
-        <ion-icon slot="icon-only" name="paper-plane-outline" style="height: 100%; width: 100%;"></ion-icon>
+        <ion-icon slot="icon-only" color="secondary" name="paper-plane-outline" style="height: 100%; width: 100%;">
+        </ion-icon>
       </ion-button>
     </ion-item>
   </ion-card>

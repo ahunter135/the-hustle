@@ -30,7 +30,8 @@ export class DbServiceService {
       activeQuestion: {},
       state: 0,
       timeToReveal: false,
-      messages: [{text: 'Please wait and talk amongst yourselves', sender: 'HOST'}]
+      private: true,
+      messages: [{text: 'Please wait and talk amongst yourselves', sender: 'Host'}]
     });
     this.unsubscribe = this.db.collection("rooms").doc(roomid)
     .onSnapshot(function(doc) {
@@ -117,6 +118,24 @@ export class DbServiceService {
     return await this.db.collection('rooms').doc(roomid).update({
       messages: messages
     })
+  }
+
+  async findGame() {
+    let snapshot = await this.db.collection('rooms').where("state", "==", 0).where("private", "==", false).get();
+    let rooms = [];
+    snapshot.docs.map(doc => {
+      rooms.push({
+        data: doc.data(),
+        id: doc.id
+      })
+    });
+    return rooms[0];
+  }
+
+  async updateRoomPrivacy(privacy, roomid) {
+    return await this.db.collection('rooms').doc(roomid).update({
+      private: privacy
+    });
   }
 
   unsubscribeFromRoom() {

@@ -1,7 +1,7 @@
 import { AdMob } from '@admob-plus/ionic';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform, ToastController } from '@ionic/angular';
 import { HelpComponent } from '../modals/help/help.component';
 import { StorageServiceService } from '../services/storage-service.service';
 
@@ -13,7 +13,8 @@ import { StorageServiceService } from '../services/storage-service.service';
 export class HomePage {
   notification = <any>{};
   roomcode;
-  constructor(private storage: StorageServiceService, private router: Router, private modalCtrl: ModalController, private admob: AdMob, private platform: Platform) {}
+  constructor(private storage: StorageServiceService, private router: Router, private modalCtrl: ModalController,
+    private admob: AdMob, private platform: Platform, private toastCtrl: ToastController) {}
 
   async ngOnInit() {
     let notif = await this.storage.getNotification();
@@ -27,6 +28,17 @@ export class HomePage {
     this.router.navigateByUrl("/game-screen", {
       replaceUrl: true
     })
+  }
+
+  async findGame() {
+    let roomData = await this.storage.findGame();
+
+    if (roomData) {
+      this.showToast("Room found, joining " + roomData.id + "..");
+      this.joinGame(roomData.id);
+    } else {
+      this.showToast("No Rooms Found, try again later..");
+    }
   }
 
   async joinGame(roomcode) {
@@ -51,4 +63,16 @@ export class HomePage {
 
     return await modal.present();
   }
+
+  async showToast(message) {
+    const toast = await this.toastCtrl.create({
+      message: message,
+      position: 'bottom',
+      duration: 2000
+    });
+
+    toast.present();
+  }
 }
+
+
