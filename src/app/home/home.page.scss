@@ -57,19 +57,19 @@
   right: 0;
   top: 33%;
   transform: translateY(-50%);
-  font-family: 'metro';
-  filter: drop-shadow(0 0 0.5px #645f52)
+  font-family: "metro";
+  filter: drop-shadow(0 0 0.5px #645f52);
 }
- 
+
 ion-content {
   --ion-background-color: #efe0bb;
 }
 
 ion-button {
-  font-family: 'molle';
+  font-family: "molle";
   font-size: 17px;
 }
 ion-input {
-  font-family: 'molle';
+  font-family: "pica";
   font-size: 14px;
 }
