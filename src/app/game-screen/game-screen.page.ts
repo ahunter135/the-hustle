@@ -1,5 +1,5 @@
 import { AdMob } from '@admob-plus/ionic';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoadingController, ModalController, Platform, PopoverController, ToastController } from '@ionic/angular';
 import { DbServiceService } from '../services/db-service.service';
@@ -36,6 +36,7 @@ export class GameScreenPage implements OnInit {
   messages = [];
   text = "";
   numQuestions = "2";
+  popover;
   constructor(public dbService: DbServiceService, private globalService: GlobalService, public storage:StorageServiceService,
     private router: Router, private loadingCtrl: LoadingController, private admob: AdMob, private platform: Platform,
     private toastCtrl: ToastController, private clipboard: Clipboard, private modalCtrl: ModalController) { }
@@ -115,6 +116,8 @@ export class GameScreenPage implements OnInit {
 
       if (data.value.messages) {
         this.messages = data.value.messages;
+        var objDiv = document.getElementById("chat");
+        objDiv.scrollTop = objDiv.scrollHeight;
       }
       
     });
@@ -284,14 +287,16 @@ export class GameScreenPage implements OnInit {
   }
 
   async popoutChat(ev: any) {
-    const popover = await this.modalCtrl.create({
+    this.popover = await this.modalCtrl.create({
       component: ChatPopoverComponent,
       componentProps: {
-        data: this.messages
+        data: this.messages,
+        sendMessage: this.sendMessage,
+        storage: this.storage
       },
       cssClass: 'chatpopover'
     });
-    return await popover.present();
+    return await this.popover.present();
   }
 
   shuffle(array) {

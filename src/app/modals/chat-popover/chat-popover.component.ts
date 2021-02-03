@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { NavParams } from '@ionic/angular';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ModalController, NavParams } from '@ionic/angular';
+import { GlobalService } from 'src/app/services/global.service';
 
 @Component({
   selector: 'app-chat-popover',
@@ -7,14 +8,38 @@ import { NavParams } from '@ionic/angular';
   styleUrls: ['./chat-popover.component.scss'],
 })
 export class ChatPopoverComponent implements OnInit {
+  @ViewChild('content') private content: any;
   messages = [];
   text = "";
-  constructor(private params: NavParams) {
+  send;
+  storage;
+  constructor(private params: NavParams, private globalService: GlobalService, private modalCtrl: ModalController) {
     this.messages = this.params.get("data");
+    this.send = this.params.get('sendMessage');
+    this.storage = this.params.get('storage');
   }
 
-  sendMessage(text){}
+  sendMessage(text){
+    console.log(text);
+    this.send(text);
+  }
 
-  ngOnInit() {}
+  close() {
+    this.modalCtrl.dismiss();
+  }
+
+  ngOnInit() {
+    this.globalService.getObservable().subscribe(async (data) => {
+      console.log(data);
+      if (data.value.messages) {
+        this.messages = data.value.messages;
+        this.scrollToBottomOnInit();
+      }
+    });
+  }
+
+  scrollToBottomOnInit() {
+    this.content.scrollToBottom(300);
+  }
 
 }

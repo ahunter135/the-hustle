@@ -192,7 +192,7 @@
         </ion-icon>
       </ion-card-subtitle>
     </ion-card-header>
-    <ion-card-content style="min-height: 150px; max-height: 150px; overflow: scroll">
+    <ion-card-content style="min-height: 150px; max-height: 150px; overflow: scroll" id="chat">
       <div *ngFor="let message of messages" style="padding-bottom: 5px;" class="message-list">
         <span>{{message.sender}}:</span><br>
         <span>{{message.text}}</span>
