@@ -31,7 +31,9 @@ export class DbServiceService {
       state: 0,
       timeToReveal: false,
       private: true,
-      messages: [{text: 'Please wait and talk amongst yourselves', sender: 'Host'}]
+      messages: [{text: 'Please wait and talk amongst yourselves', sender: 'Host'}],
+      created: new Date().toISOString(),
+      timerStarted: false
     });
     this.unsubscribe = this.db.collection("rooms").doc(roomid)
     .onSnapshot(function(doc) {
@@ -129,13 +131,21 @@ export class DbServiceService {
         id: doc.id
       })
     });
-    return rooms[0];
+    let numRooms = rooms.length - 1;
+    let randomRoomIndex = Math.floor(Math.random() * numRooms) + 1;
+    return rooms[randomRoomIndex];
   }
 
   async updateRoomPrivacy(privacy, roomid) {
     return await this.db.collection('rooms').doc(roomid).update({
       private: privacy
     });
+  }
+
+  async updateRoomTimer(timer, roomid) {
+    return await this.db.collection('rooms').doc(roomid).update({
+      timerStarted: timer
+    })
   }
 
   unsubscribeFromRoom() {

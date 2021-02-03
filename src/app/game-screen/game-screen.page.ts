@@ -119,6 +119,15 @@ export class GameScreenPage implements OnInit {
         var objDiv = document.getElementById("chat");
         objDiv.scrollTop = objDiv.scrollHeight;
       }
+
+      if (this.playerType == 1) {
+        this.timerStarted = data.value.timerStarted;
+        if (this.timerStarted) {
+          this.startTimer();
+        } else {
+          this.resetTimer();
+        }
+      }
       
     });
 
@@ -238,7 +247,10 @@ export class GameScreenPage implements OnInit {
   }
 
   async startTimer() {
-    this.timerStarted = true;
+    if (this.playerType == 0) {
+      this.timerStarted = true;
+      await this.storage.updateRoomTimer(this.timerStarted);
+    }
     this.interval = setInterval(() => {
       this.time--;
       if (this.time <= 0) this.resetTimer();
@@ -248,6 +260,8 @@ export class GameScreenPage implements OnInit {
   async resetTimer() {
     this.time = 60;
     this.timerStarted = false;
+    if (this.playerType == 0)
+      await this.storage.updateRoomTimer(this.timerStarted);
     clearInterval(this.interval);
   }
 
