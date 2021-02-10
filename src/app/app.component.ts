@@ -49,6 +49,8 @@ export class AppComponent {
   }
 
   setupOneSignal() {
+    this.oneSignal.promptForPushNotificationsWithUserResponse();
+
     this.oneSignal.startInit('e432b79e-c33f-4474-9f2c-e2302ebdec63', '467223816790');
 
     this.oneSignal.inFocusDisplaying(this.oneSignal.OSInFocusDisplayOption.InAppAlert);
