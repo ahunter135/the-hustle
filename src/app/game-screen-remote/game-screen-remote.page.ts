@@ -35,7 +35,7 @@ export class GameScreenRemotePage implements OnInit {
   text = "";
   popover;
   gameType;
-  constructor(private globalService: GlobalService, private storage: StorageServiceService, private router: Router, private platform: Platform, private admob: AdMob, private clipboard: Clipboard, private toastCtrl: ToastController, private onesignal: OneSignal) { }
+  constructor(private globalService: GlobalService, public storage: StorageServiceService, private router: Router, private platform: Platform, private admob: AdMob, private clipboard: Clipboard, private toastCtrl: ToastController, private onesignal: OneSignal) { }
 
   async ngOnInit() {
     this.globalService.getObservable().subscribe(async (data) => {

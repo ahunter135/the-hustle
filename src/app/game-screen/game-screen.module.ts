@@ -7,20 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { GameScreenPageRoutingModule } from './game-screen-routing.module';
 
 import { GameScreenPage } from './game-screen.page';
-import { ChatPopoverComponent } from '../modals/chat-popover/chat-popover.component';
-import { LobbyBlockComponent } from '../components/lobby-block/lobby-block.component';
-import { VotingBlockComponent } from '../components/voting-block/voting-block.component';
-import { ChatBlockComponent } from '../components/chat-block/chat-block.component';
-import { PlayersBlockComponent } from '../components/players-block/players-block.component';
+import { ComponentsModule } from '../components/components.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    GameScreenPageRoutingModule
+    GameScreenPageRoutingModule,
+    ComponentsModule
   ],
-  declarations: [GameScreenPage, ChatPopoverComponent, LobbyBlockComponent, VotingBlockComponent, ChatBlockComponent, PlayersBlockComponent],
-  entryComponents: [ChatPopoverComponent, LobbyBlockComponent, VotingBlockComponent, ChatBlockComponent, PlayersBlockComponent]
+  declarations: [GameScreenPage]
 })
 export class GameScreenPageModule {}

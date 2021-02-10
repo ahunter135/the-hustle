@@ -7,19 +7,17 @@ import { IonicModule } from '@ionic/angular';
 import { GameScreenRemotePageRoutingModule } from './game-screen-remote-routing.module';
 
 import { GameScreenRemotePage } from './game-screen-remote.page';
-import { ChatBlockComponent } from '../components/chat-block/chat-block.component';
-import { LobbyBlockComponent } from '../components/lobby-block/lobby-block.component';
-import { VotingBlockComponent } from '../components/voting-block/voting-block.component';
-import { PlayersBlockComponent } from '../components/players-block/players-block.component';
+import { ComponentsModule } from '../components/components.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    GameScreenRemotePageRoutingModule
+    GameScreenRemotePageRoutingModule,
+    ComponentsModule
   ],
-  declarations: [GameScreenRemotePage, ChatBlockComponent, LobbyBlockComponent, VotingBlockComponent, PlayersBlockComponent],
-  entryComponents: [ChatBlockComponent, LobbyBlockComponent, VotingBlockComponent, PlayersBlockComponent]
+  declarations: [GameScreenRemotePage],
+  entryComponents: []
 })
 export class GameScreenRemotePageModule {}
