@@ -61,26 +61,31 @@ export class GameScreenRemotePage implements OnInit {
         if (this.players[i].id == this.currentPlayer.playerId && this.players[i].isHustler) {
           this.currentPlayer.isHustler = true;
         }
+        if (this.players[i].id == this.currentPlayer.playerId) {
+          this.votingBlock.isEliminated = this.players[i].eliminated;
+          this.lobbyBlock.playerName = this.players[i].name;
+        }
+
         if (!this.players[i].eliminated) this.activePlayers.push(this.players[i]);
         if (this.players[i].voted) this.votingBlock.numVotes++;
       }
 
       this.lobbyBlock.activeQuestion = roomData.activeQuestion;
 
-      console.log(this.roomState);
-      console.log(prevState);
-      if (roomData.timerStarted) {
+      if (roomData.timerStarted && this.roomState != 3 && this.roomState != 0) {
         if (this.gameType == 1) this.lobbyBlock.startTimer(roomData.timerStarted);
         else this.lobbyBlock.startRemoteTimer(roomData.timerStarted);
       } else if (this.roomState != prevState) {
         this.lobbyBlock.votedOnQuestion = false;
         this.lobbyBlock.time = this.lobbyBlock.baseTime;
+        this.votingBlock.voted = false;
       } else {
         this.lobbyBlock.resetTimer();
       }
 
       this.lobbyBlock.answerRevealed = roomData.revealAnswer;
       this.votingBlock.eliminatedPlayer = roomData.eliminatedPlayer;
+      this.playersBlock.timeToReveal = roomData.timeToReveal;
     });
 
     this.currentPlayer.playerType = this.storage.playerType;

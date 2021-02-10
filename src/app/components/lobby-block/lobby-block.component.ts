@@ -35,7 +35,9 @@ export class LobbyBlockComponent implements OnInit {
   votedOnQuestion = false;
   constructor(private loadingCtrl: LoadingController) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.time = this.baseTime;
+  }
 
 
   async updatePlayerName(playerName) {
@@ -142,6 +144,7 @@ export class LobbyBlockComponent implements OnInit {
       this.interval = setInterval(async () => {
         if (this.time >= 0)
           this.time--;
+        else this.time = 0;
         if (this.time <= 0) {
           if (this.roomState == 1 && this.currentPlayer.playerType == 0 && !this.answerRevealed) {
             await this.storage.updateRoomTimerLength(35);
@@ -149,6 +152,7 @@ export class LobbyBlockComponent implements OnInit {
             await this.storage.updateRoomState(4);
             return;
           } else if (this.roomState == 1 && this.currentPlayer.playerType == 1) {
+            this.votedOnQuestion = false;
             return;
           }
 
@@ -160,27 +164,29 @@ export class LobbyBlockComponent implements OnInit {
             this.votedOnQuestion = false;
             this.next();
             return;
-          } else if (this.roomState == 1 && this.currentPlayer.playerType == 1) {
+          } else if (this.roomState == 5 && this.currentPlayer.playerType == 1) {
+            this.votedOnQuestion = false;
             return;
           }
 
           if (this.roomState == 2 && this.currentPlayer.playerType == 0) {
-            await this.storage.updateRoomTimerLength(60);
-            await this.storage.updateRoomTimer(false);
-            await this.storage.toggleShowAnswer(false);
-            this.votingBlock.removePlayerThenNext();
+            if (this.votingBlock.eliminatedPlayer) {
+              await this.storage.updateRoomTimerLength(60);
+              await this.storage.updateRoomTimer(false);
+              await this.storage.toggleShowAnswer(false);
+              this.votingBlock.removePlayerThenNext();
+            }
             return;
           } else if (this.roomState == 2 && this.currentPlayer.playerType == 1) {
+            if (this.votingBlock.eliminatedPlayer) this.votedOnQuestion = false;
             return;
           }
 
           if (this.roomState == 3 && this.currentPlayer.playerType == 0) {
-            await this.storage.updateRoomTimerLength(30);
-            await this.storage.updateRoomTimer(false);
-            this.votedOnQuestion = false;
-            this.next();
+            this.resetTimer();
             return;
-          } else if (this.roomState == 1 && this.currentPlayer.playerType == 1) {
+          } else if (this.roomState == 3 && this.currentPlayer.playerType == 1) {
+            this.resetTimer();
             return;
           }
 
@@ -189,6 +195,7 @@ export class LobbyBlockComponent implements OnInit {
             await this.storage.updateRoomState(5);
             await this.storage.toggleShowAnswer(true);
             await this.storage.updateRoomTimer(false);
+            this.votedOnQuestion = false;
             return;
           } else if (this.roomState == 4 && this.currentPlayer.playerType == 1) {
             return;
@@ -206,6 +213,7 @@ export class LobbyBlockComponent implements OnInit {
       await this.storage.updateRoomTimer(this.timerStarted);
 
     if (this.gameType == 0 && this.currentPlayer.playerType == 0 && this.roomState != 0) {
+      if (this.roomState != 3)
       await this.storage.updateRoomTimer(true);
     }
   }
@@ -223,7 +231,6 @@ export class LobbyBlockComponent implements OnInit {
         await this.storage.updateRoomState(3);  
         await this.storage.updateRoomTimer(false);
         await this.storage.toggleShowAnswer(false);
-        await this.storage.updateRoomTimerLength(30);
         this.activeQuestion = <any>{
           question: "",
           answers: []
@@ -231,6 +238,8 @@ export class LobbyBlockComponent implements OnInit {
         await this.storage.updateRoomQuestion(this.activeQuestion);
         return;
       }
+      await this.storage.updateRoomTimerLength(30);
+      await this.storage.updateRoomTimer(false);
       await this.storage.updateRoomState(2);
       this.activeQuestion = <any>{
         question: "",

@@ -10,7 +10,8 @@
     <span class="roomcode">Room Code: {{storage.roomid | uppercase}}</span>
     <div>Please enter your name while you wait.</div>
     <ion-item color="primary">
-      <ion-input placeholder="Enter your name" [(ngModel)]="nametext">
+      <ion-input placeholder="Enter your name" autocapitalize="on" autocomplete="on" autocorrect="on"
+        [(ngModel)]="nametext">
       </ion-input>
       <ion-button slot="end" color="success" (click)="updatePlayerName(nametext)">Submit
       </ion-button>
@@ -82,7 +83,8 @@
   <ion-card-content>
     <div>Please enter your name while you wait.</div>
     <ion-item color="primary">
-      <ion-input placeholder="Enter your name" [(ngModel)]="playerName">
+      <ion-input placeholder="Enter your name" autocapitalize="on" autocomplete="on" autocorrect="on"
+        [(ngModel)]="playerName">
       </ion-input>
       <ion-button slot="end" color="success" (click)="updatePlayerName(playerName)">Submit</ion-button>
     </ion-item>
@@ -118,7 +120,8 @@
     <br>
     <span [innerHTML]="activeQuestion.question"></span>
     <ion-list>
-      <ion-item *ngFor="let q of activeQuestion.answers; let i=index;" color="primary" button (click)="voteOnAnswer(i)">
+      <ion-item *ngFor="let q of activeQuestion.answers; let i=index;" color="primary" button (click)="voteOnAnswer(i)"
+        [disabled]="votingBlock.isEliminated">
         <span
           [ngStyle]="{'background': currentPlayer.isHustler && q == activeQuestion.correct_answer ? 'var(--ion-color-success)' : answerRevealed && q == activeQuestion.correct_answer ? 'var(--ion-color-success)' : '', 'z-index': 99}"
           [innerHTML]="q"></span>
