@@ -1,0 +1,147 @@
+<ion-card *ngIf="currentPlayer.playerType == 0 && roomState == 0" color="primary">
+  <ion-card-header>
+    <ion-card-title style="font-family: 'molle';">
+      <span *ngIf="gameType == 1">You are the host!</span>
+      <span *ngIf="gameType == 0">Non-Moderated Game</span>
+    </ion-card-title>
+  </ion-card-header>
+  <ion-card-content style="font-family: 'pica' !important">
+    <div>Please let all your players join before hitting begin!</div>
+    <span class="roomcode">Room Code: {{storage.roomid | uppercase}}</span>
+    <div>Please enter your name while you wait.</div>
+    <ion-item color="primary">
+      <ion-input placeholder="Enter your name" [(ngModel)]="nametext">
+      </ion-input>
+      <ion-button slot="end" color="success" (click)="updatePlayerName(nametext)">Submit
+      </ion-button>
+    </ion-item>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-item style="padding: 0;" color="primary">
+            <ion-label style="font-family: 'pica' !important;">Questions Per Round</ion-label>
+            <ion-select [(ngModel)]="numQuestions" value="numQuestions">
+              <ion-select-option value="2">2</ion-select-option>
+              <ion-select-option value="3">3</ion-select-option>
+              <ion-select-option value="4">4</ion-select-option>
+              <ion-select-option value="5">5</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-item style="padding: 0;" color="primary">
+        <ion-label style="font-family: 'pica' !important; ">Private</ion-label>
+        <ion-toggle color="secondary" [(ngModel)]="isPrivate" (ionChange)="updateRoomPrivacy()"></ion-toggle>
+      </ion-item>
+      <ion-row>
+        <ion-col>
+          <ion-button expand="block" color="danger" (click)="cancelHost()">Cancel</ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-button expand="block" color="success" (click)="begin()" [disabled]="players.length < 4">Begin
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card-content>
+</ion-card>
+<ion-card *ngIf="currentPlayer.playerType == 0 && roomState == 1 && gameType == 1" color="primary">
+  <ion-card-header>
+    <ion-card-subtitle>Question Time</ion-card-subtitle>
+  </ion-card-header>
+  <ion-card-content>
+    <span [innerHTML]="activeQuestion.question"></span>
+    <ion-list>
+      <ion-item *ngFor="let q of activeQuestion.answers" color="primary">
+        <span
+          [ngStyle]="{'background': q == activeQuestion.correct_answer && answerRevealed ? 'var(--ion-color-success)' : ''}"
+          [innerHTML]="q"></span>
+      </ion-item>
+    </ion-list>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-button *ngIf="!answerRevealed" color="success" expand="block" (click)="revealAnswer()">Reveal Answer
+          </ion-button>
+          <ion-button *ngIf="answerRevealed" color="success" expand="block" (click)="next()">Next Question
+          </ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-button color="light" expand="block" (click)="startTimer(null)" *ngIf="!timerStarted">Start Timer
+          </ion-button>
+          <ion-button color="light" expand="block" (click)="resetTimer()" *ngIf="timerStarted">{{time}}</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card-content>
+</ion-card>
+<ion-card *ngIf="currentPlayer.playerType == 1  && roomState == 0" color="primary">
+  <ion-card-header>
+    <ion-card-title style="font-family: 'molle';">Waiting for Game to Start</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <div>Please enter your name while you wait.</div>
+    <ion-item color="primary">
+      <ion-input placeholder="Enter your name" [(ngModel)]="playerName">
+      </ion-input>
+      <ion-button slot="end" color="success" (click)="updatePlayerName(playerName)">Submit</ion-button>
+    </ion-item>
+  </ion-card-content>
+</ion-card>
+<ion-card
+  *ngIf="(currentPlayer.playerType == 1  && roomState == 1 && gameType == 1) || (gameType == 0 && roomState == 1)"
+  color="primary">
+  <ion-card-header>
+    <ion-card-subtitle>{{time}} seconds remaining</ion-card-subtitle>
+    <ion-card-title>Question Time</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <span>You have {{time}} seconds to discuss the correct answer!</span>
+    <br>
+    <span [innerHTML]="activeQuestion.question"></span>
+    <ion-list>
+      <ion-item *ngFor="let q of activeQuestion.answers" color="primary">
+        <span
+          [ngStyle]="{'background': currentPlayer.isHustler && q == activeQuestion.correct_answer ? 'var(--ion-color-success)' : answerRevealed && q == activeQuestion.correct_answer ? 'var(--ion-color-success)' : '', 'z-index': 99}"
+          [innerHTML]="q"></span>
+      </ion-item>
+    </ion-list>
+  </ion-card-content>
+</ion-card>
+<ion-card *ngIf="gameType == 0 && roomState == 4" color="primary">
+  <ion-card-header>
+    <ion-card-subtitle>{{time}} seconds remaining</ion-card-subtitle>
+    <ion-card-title>Question Time</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <span>You have {{time}} seconds to choose the correct answer!</span>
+    <br>
+    <span [innerHTML]="activeQuestion.question"></span>
+    <ion-list>
+      <ion-item *ngFor="let q of activeQuestion.answers; let i=index;" color="primary" button (click)="voteOnAnswer(i)">
+        <span
+          [ngStyle]="{'background': currentPlayer.isHustler && q == activeQuestion.correct_answer ? 'var(--ion-color-success)' : answerRevealed && q == activeQuestion.correct_answer ? 'var(--ion-color-success)' : '', 'z-index': 99}"
+          [innerHTML]="q"></span>
+        <span slot="end">{{activeQuestion.voteArray[i]}}</span>
+      </ion-item>
+    </ion-list>
+  </ion-card-content>
+</ion-card>
+<ion-card *ngIf="gameType == 0 && roomState == 5" color="primary">
+  <ion-card-header>
+    <ion-card-subtitle>Did you get it right?</ion-card-subtitle>
+    <ion-card-title>Answer Time</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <span>You have {{time}} seconds to discuss the correct answer!</span>
+    <br>
+    <span [innerHTML]="activeQuestion.question"></span>
+    <ion-list>
+      <ion-item *ngFor="let q of activeQuestion.answers" color="primary">
+        <span
+          [ngStyle]="{'background': currentPlayer.isHustler && q == activeQuestion.correct_answer ? 'var(--ion-color-success)' : answerRevealed && q == activeQuestion.correct_answer ? 'var(--ion-color-success)' : '', 'z-index': 99}"
+          [innerHTML]="q"></span>
+      </ion-item>
+    </ion-list>
+  </ion-card-content>
+</ion-card>

@@ -1,0 +1,42 @@
+<ion-card *ngIf="roomState != 2" color="primary">
+  <ion-card-header>
+    <ion-card-subtitle>Players</ion-card-subtitle>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-item *ngFor="let player of activePlayers; let i=index;" color="primary">
+      <ion-progress-bar *ngIf="!timeToReveal" value="{{player.votes / players.length}}" class="progress">
+      </ion-progress-bar>
+      <span *ngIf="player.name; else elseBlock"
+        [ngStyle]="{'background': timeToReveal && player.isHustler ? 'var(--ion-color-success)' : '', 'z-index': 99}">{{i + 1}}.
+        {{player.name}}</span>
+      <ng-template #elseBlock>
+        <span
+          [ngStyle]="{'background': timeToReveal && player.isHustler ? 'var(--ion-color-success)' : '', 'z-index': 99}">{{i + 1}}.
+          {{player.id}}</span>
+      </ng-template>
+
+      <ion-button (click)="remove(i)" slot="end" style="z-index: 99"
+        *ngIf="roomState == 0 && currentPlayer.playerType == 0">
+        <ion-icon slot="icon-only" name="close-circle" color="secondary">
+        </ion-icon>
+      </ion-button>
+      <ion-button (click)="voteOnHustler(i)" slot="end" style="z-index: 99"
+        *ngIf="roomState == 3 && !votingBlock.voted">
+        <ion-icon slot="icon-only" name="add" color="secondary">
+        </ion-icon>
+      </ion-button>
+      <ion-button disabled slot="end" style="z-index: 99" *ngIf="roomState == 3 && votingBlock.voted">
+        {{player.votes}}
+      </ion-button>
+    </ion-item>
+    <ion-grid *ngIf="currentPlayer.playerType == 0 && roomState == 3">
+      <ion-row>
+        <ion-col>
+          <ion-button expand="block" color="success" (click)="revealHustler()" [hidden]="timeToReveal">Reveal Liar
+          </ion-button>
+          <ion-button expand="block" color="success" (click)="cancel()">Exit</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card-content>
+</ion-card>

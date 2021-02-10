@@ -1,24 +1,22 @@
 <ion-header>
   <ion-toolbar color="secondary">
-    <ion-title color="dark">Live Chat</ion-title>
+    <ion-title color="dark">Live Chat - {{lobbyBlock.time}} Seconds</ion-title>
     <ion-buttons slot="start" (click)="close()">
       <ion-button color="dark">Close</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content style="overflow: scroll" color="primary" #content>
-  <div style="min-height: 300px; max-height: 500px; overflow: scroll">
-    <div *ngFor="let message of messages" style="padding-bottom: 5px; padding-left: 5px; font-family: 'dukas';"
-      class="message-list">
-      <span>{{message.sender}}:</span><br>
-      <span>{{message.text}}</span>
-    </div>
+<ion-content color="primary" style="min-height: 300px; max-height: 500px; overflow: scroll" #content>
+  <div *ngFor="let message of messages" style="padding-bottom: 5px; padding-left: 5px; font-family: 'dukas';"
+    class="message-list">
+    <span>{{message.sender}}:</span><br>
+    <span>{{message.text}}</span>
   </div>
 </ion-content>
 <ion-footer>
   <ion-toolbar color="primary">
     <ion-input placeholder="Message..." style="overflow-wrap: break-word; width: 100%; font-family: 'dukas';"
-      [(ngModel)]="text">
+      autocapitalize="on" autocomplete="on" autocorrect="on" [(ngModel)]="text">
     </ion-input>
     <ion-buttons slot="end">
       <ion-button fill="clear" style="width: 30px" (click)="sendMessage(text)" [disabled]="!text">

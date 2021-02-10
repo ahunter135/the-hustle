@@ -9,18 +9,22 @@ import { GlobalService } from 'src/app/services/global.service';
 })
 export class ChatPopoverComponent implements OnInit {
   @ViewChild('content') private content: any;
+
   messages = [];
   text = "";
   send;
   storage;
+  currentPlayer;
+  lobbyBlock;
   constructor(private params: NavParams, private globalService: GlobalService, private modalCtrl: ModalController) {
     this.messages = this.params.get("data");
     this.send = this.params.get('sendMessage');
     this.storage = this.params.get('storage');
+    this.currentPlayer = this.params.get('currentPlayer');
+    this.lobbyBlock = this.params.get('lobbyBlock');
   }
 
   sendMessage(text){
-    console.log(text);
     this.send(text);
   }
 
@@ -30,7 +34,6 @@ export class ChatPopoverComponent implements OnInit {
 
   ngOnInit() {
     this.globalService.getObservable().subscribe(async (data) => {
-      console.log(data);
       if (data.value.messages) {
         this.messages = data.value.messages;
         this.scrollToBottomOnInit();
@@ -39,7 +42,9 @@ export class ChatPopoverComponent implements OnInit {
   }
 
   scrollToBottomOnInit() {
-    this.content.scrollToBottom(300);
+    setTimeout(() => {
+      this.content.scrollToBottom(300);
+    }, 300)
   }
 
 }

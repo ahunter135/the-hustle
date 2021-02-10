@@ -1,0 +1,10 @@
+// vote slider
+.progress {
+	position: absolute;
+  z-index: 5;
+  --background: var(--ion-color-primary);
+  --buffer-background: var(--ion-color-primary);
+  --progress-background: var(--ion-color-tertiary);
+  height: 23px;
+  width: 100%;
+}

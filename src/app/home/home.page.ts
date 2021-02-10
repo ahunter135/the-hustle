@@ -1,8 +1,9 @@
 import { AdMob } from '@admob-plus/ionic';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ModalController, Platform, ToastController } from '@ionic/angular';
+import { AlertController, ModalController, Platform, ToastController } from '@ionic/angular';
 import { HelpComponent } from '../modals/help/help.component';
+import { GlobalService } from '../services/global.service';
 import { StorageServiceService } from '../services/storage-service.service';
 
 @Component({
@@ -14,20 +15,54 @@ export class HomePage {
   notification = <any>{};
   roomcode;
   constructor(private storage: StorageServiceService, private router: Router, private modalCtrl: ModalController,
-    private admob: AdMob, private platform: Platform, private toastCtrl: ToastController) {}
+    private admob: AdMob, private platform: Platform, private toastCtrl: ToastController, private alertCtrl: AlertController,
+    private globalService: GlobalService) {}
 
   async ngOnInit() {
+    this.globalService.getObservable().subscribe(async (data) => {
+      if (data.value == 1) {
+        this.router.navigateByUrl("/game-screen", {
+          replaceUrl: true
+        })
+      } else if (data.key == 'wheretogo') {
+        this.router.navigateByUrl("/game-screen-remote", {
+          replaceUrl: true
+        })
+      }
+    });
     let notif = await this.storage.getNotification();
     this.notification = notif.data();
 // ios
   }
 
   async startGame() {
-    await this.storage.createHostUser();
-    this.storage.playerType = 0;
-    this.router.navigateByUrl("/game-screen", {
-      replaceUrl: true
-    })
+    let alert = await this.alertCtrl.create({
+      header: 'Lobby Type',
+      message: 'Would you like to play an in-person game or remote online game? See rules for the difference.',
+      buttons: [
+        {
+          text: 'Remote',
+          handler: async () => {
+            await this.storage.createHostUser(0);
+            this.storage.playerType = 0;
+            this.router.navigateByUrl("/game-screen-remote", {
+              replaceUrl: true
+            })
+          }
+        }, {
+          text: 'In-Person',
+          handler: async () => {
+            await this.storage.createHostUser(1);
+            this.storage.playerType = 0;
+            this.router.navigateByUrl("/game-screen", {
+              replaceUrl: true
+            })
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   async findGame() {
@@ -44,9 +79,6 @@ export class HomePage {
   async joinGame(roomcode) {
     await this.storage.createPlayer(roomcode);
     this.storage.playerType = 1;
-    this.router.navigateByUrl("/game-screen", {
-      replaceUrl: true
-    })
   }
 
   toUpper() {

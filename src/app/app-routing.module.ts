@@ -15,6 +15,10 @@ const routes: Routes = [
     path: 'game-screen',
     loadChildren: () => import('./game-screen/game-screen.module').then( m => m.GameScreenPageModule)
   },
+  {
+    path: 'game-screen-remote',
+    loadChildren: () => import('./game-screen-remote/game-screen-remote.module').then( m => m.GameScreenRemotePageModule)
+  },
 ];
 
 @NgModule({

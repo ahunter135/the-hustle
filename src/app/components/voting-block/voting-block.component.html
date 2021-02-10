@@ -1,0 +1,68 @@
+<ion-card *ngIf="roomState == 2 && currentPlayer.playerType == 0 && lobbyBlock.gameType == 1" color="primary">
+  <ion-card-header>
+    <ion-card-subtitle>Voting Commenced</ion-card-subtitle>
+  </ion-card-header>
+  <ion-card-content *ngIf="numVotes == activePlayers.length; else elseBlock">
+    Eliminated Player: <span *ngIf="eliminatedPlayer.name; else elseBlock">{{eliminatedPlayer.name}}</span>
+    <ng-template #elseBlock>{{eliminatedPlayer.id}}</ng-template>
+
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-button color="success" expand="block" (click)="removePlayerThenNext()">Next Question</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card-content>
+  <ng-template #elseBlock>
+    <ion-card-content>
+      {{numVotes}} / {{activePlayers.length}} Votes
+    </ion-card-content>
+  </ng-template>
+</ion-card>
+<ion-card *ngIf="roomState == 2 && currentPlayer.playerType == 1 && !voted && lobbyBlock.gameType == 1" color="primary">
+  <ion-card-header>
+    <ion-card-subtitle>Players</ion-card-subtitle>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-item *ngFor="let player of activePlayers; let i=index;" button (click)="vote(player, i)"
+      [hidden]="player.id == storage.playerid" color="primary" [disabled]="isEliminated">
+      <span *ngIf="player.name && player.id != storage.playerid; else elseBlock">{{i + 1}}. {{player.name}}</span>
+      <ng-template #elseBlock>
+        <ng-container *ngIf="player.id != storage.playerid">{{i + 1}}. {{player.id}}</ng-container>
+      </ng-template>
+    </ion-item>
+  </ion-card-content>
+</ion-card>
+<ion-card *ngIf="roomState == 2 && currentPlayer.playerType == 1 && voted && lobbyBlock.gameType == 1" color="primary">
+  <ion-card-header>
+    <ion-card-subtitle>Voting</ion-card-subtitle>
+  </ion-card-header>
+  <ion-card-content>
+    Thanks for voting
+  </ion-card-content>
+</ion-card>
+<ion-card *ngIf="roomState == 2 && !voted && lobbyBlock.gameType == 0 && numVotes < activePlayers.length"
+  color="primary">
+  <ion-card-header>
+    <ion-card-subtitle>Players - {{lobbyBlock.time}} Seconds</ion-card-subtitle>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-item *ngFor="let player of activePlayers; let i=index;" button (click)="vote(player, i)"
+      [hidden]="player.id == storage.playerid" color="primary" [disabled]="isEliminated">
+      <span *ngIf="player.name && player.id != storage.playerid; else elseBlock">{{i + 1}}. {{player.name}}</span>
+      <ng-template #elseBlock>
+        <ng-container *ngIf="player.id != storage.playerid">{{i + 1}}. {{player.id}}</ng-container>
+      </ng-template>
+    </ion-item>
+  </ion-card-content>
+</ion-card>
+<ion-card *ngIf="roomState == 2  && voted && lobbyBlock.gameType == 0" color="primary">
+  <ion-card-header>
+    <ion-card-subtitle>Voting - {{lobbyBlock.time}} Seconds</ion-card-subtitle>
+  </ion-card-header>
+  <ion-card-content *ngIf="numVotes == activePlayers.length">
+    Eliminated Player: <span *ngIf="eliminatedPlayer.name; else elseBlock">{{eliminatedPlayer.name}}</span>
+    <ng-template #elseBlock>{{eliminatedPlayer.id}}</ng-template>
+  </ion-card-content>
+</ion-card>

@@ -13,6 +13,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AdMob } from '@admob-plus/ionic';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
+import { OneSignal } from '@ionic-native/onesignal/ngx';
 
 var firebaseConfig = {
   apiKey: "AIzaSyCLTnNoAXOI3E13j_doKmRFM8gpkTl4yBM",
@@ -38,6 +39,7 @@ firebase.initializeApp(firebaseConfig);
     AdMob,
     Keyboard,
     Clipboard,
+    OneSignal,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

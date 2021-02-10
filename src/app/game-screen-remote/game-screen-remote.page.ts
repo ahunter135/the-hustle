@@ -1,24 +1,22 @@
 import { AdMob } from '@admob-plus/ionic';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { Clipboard } from '@ionic-native/clipboard/ngx';
+import { OneSignal } from '@ionic-native/onesignal/ngx';
 import { Platform, ToastController } from '@ionic/angular';
-import { DbServiceService } from '../services/db-service.service';
+import { ChatBlockComponent } from '../components/chat-block/chat-block.component';
+import { LobbyBlockComponent } from '../components/lobby-block/lobby-block.component';
+import { PlayersBlockComponent } from '../components/players-block/players-block.component';
+import { VotingBlockComponent } from '../components/voting-block/voting-block.component';
 import { GlobalService } from '../services/global.service';
 import { StorageServiceService } from '../services/storage-service.service';
-import { Clipboard } from '@ionic-native/clipboard/ngx';
-import { LobbyBlockComponent } from '../components/lobby-block/lobby-block.component';
-import { VotingBlockComponent } from '../components/voting-block/voting-block.component';
-import { ChatBlockComponent } from '../components/chat-block/chat-block.component';
-import { PlayersBlockComponent } from '../components/players-block/players-block.component';
-import { OneSignal } from '@ionic-native/onesignal/ngx';
 
-LobbyBlockComponent
 @Component({
-  selector: 'app-game-screen',
-  templateUrl: './game-screen.page.html',
-  styleUrls: ['./game-screen.page.scss'],
+  selector: 'app-game-screen-remote',
+  templateUrl: './game-screen-remote.page.html',
+  styleUrls: ['./game-screen-remote.page.scss'],
 })
-export class GameScreenPage implements OnInit {
+export class GameScreenRemotePage implements OnInit {
   @ViewChild(LobbyBlockComponent) lobbyBlock: LobbyBlockComponent;
   @ViewChild(VotingBlockComponent) votingBlock: VotingBlockComponent;
   @ViewChild(ChatBlockComponent) chatBlock: ChatBlockComponent;
@@ -30,76 +28,63 @@ export class GameScreenPage implements OnInit {
     playerId: '',
     playerType: null
   }
-  roomState = 0;  
-  text = "";
-  popover;
-  loading = true;
   players = [];
   activePlayers = [];
+  roomState = 0;  
+  timeToReveal = false;
+  text = "";
+  popover;
   gameType;
-  constructor(public dbService: DbServiceService, private globalService: GlobalService, public storage: StorageServiceService,
-    private router: Router, private admob: AdMob, private platform: Platform,
-    private toastCtrl: ToastController, private clipboard: Clipboard, private onesignal: OneSignal) { }
+  constructor(private globalService: GlobalService, private storage: StorageServiceService, private router: Router, private platform: Platform, private admob: AdMob, private clipboard: Clipboard, private toastCtrl: ToastController, private onesignal: OneSignal) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.globalService.getObservable().subscribe(async (data) => {
       if (data.value == null) {
         this.showAdAndLeave();
         return;
       }
-      this.gameType = data.value.gameType;
+      let roomData = data.value;
 
-      this.players = data.value.players;
-      if (this.roomState != data.value.state) {
-        this.votingBlock.voted = false;
-      }
-      this.roomState = data.value.state;
-      this.lobbyBlock.activeQuestion = data.value.activeQuestion;
+      this.gameType = roomData.gameType;
+      let prevState = this.roomState;
+      this.roomState = roomData.state;
 
-      let playerId = this.storage.playerid;
+      this.chatBlock.messages = roomData.messages;
+      this.chatBlock.scrollToBottom();
+
+      this.players = roomData.players ? roomData.players : [];
       this.activePlayers = [];
       this.votingBlock.numVotes = 0;
+      this.lobbyBlock.baseTime = this.gameType == 0 ? roomData.timerLength : 60;
+      this.votingBlock.numVotes = 0;
       for (let i = 0; i < this.players.length; i++) {
-        if (this.players[i].id == playerId && this.players[i].isHustler) {
+        if (this.players[i].id == this.currentPlayer.playerId && this.players[i].isHustler) {
           this.currentPlayer.isHustler = true;
         }
-        if (this.players[i].id == playerId) {
-          this.votingBlock.isEliminated = this.players[i].eliminated;
-          this.lobbyBlock.playerName = this.players[i].name;
-        }
-
         if (!this.players[i].eliminated) this.activePlayers.push(this.players[i]);
         if (this.players[i].voted) this.votingBlock.numVotes++;
       }
 
-      if (data.value.eliminatedPlayer) {
-        this.votingBlock.eliminatedPlayer = data.value.eliminatedPlayer;
+      this.lobbyBlock.activeQuestion = roomData.activeQuestion;
+
+      console.log(this.roomState);
+      console.log(prevState);
+      if (roomData.timerStarted) {
+        if (this.gameType == 1) this.lobbyBlock.startTimer(roomData.timerStarted);
+        else this.lobbyBlock.startRemoteTimer(roomData.timerStarted);
+      } else if (this.roomState != prevState) {
+        this.lobbyBlock.votedOnQuestion = false;
+        this.lobbyBlock.time = this.lobbyBlock.baseTime;
+      } else {
+        this.lobbyBlock.resetTimer();
       }
 
-      if (data.value.timeToReveal) {
-        this.playersBlock.timeToReveal = true;
-      }
-
-      if (data.value.revealAnswer) {
-        this.lobbyBlock.answerRevealed = data.value.revealAnswer;
-      } else this.lobbyBlock.answerRevealed = false;
-
-      if (data.value.messages) {
-        this.chatBlock.messages = data.value.messages;
-        this.chatBlock.scrollToBottom();
-      }
-
-      if (this.currentPlayer.playerType == 1) {
-        if (data.value.timerStarted) {
-          this.lobbyBlock.startTimer(data.value.timerStarted);
-        } else {
-          this.lobbyBlock.resetTimer();
-        }
-      }
-      
+      this.lobbyBlock.answerRevealed = roomData.revealAnswer;
+      this.votingBlock.eliminatedPlayer = roomData.eliminatedPlayer;
     });
 
     this.currentPlayer.playerType = this.storage.playerType;
+    this.currentPlayer.playerId = this.storage.playerid;
   }
 
   async cancel() {
@@ -139,6 +124,7 @@ export class GameScreenPage implements OnInit {
   }
 
   showAdAndLeave() {
+    
     if (!this.platform.is('cordova')) {
       this.router.navigateByUrl("/home", {
         replaceUrl: true
@@ -146,6 +132,7 @@ export class GameScreenPage implements OnInit {
       return
     }
     this.lobbyBlock.presentLoader();
+
     this.admob.interstitial.load({
       id: {
         android: 'ca-app-pub-7853858495093513/7091063908',
@@ -169,7 +156,5 @@ export class GameScreenPage implements OnInit {
     });
     return;
   }
-
-  
 
 }

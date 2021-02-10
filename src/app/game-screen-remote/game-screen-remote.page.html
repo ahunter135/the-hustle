@@ -18,12 +18,13 @@
 
 <ion-content class="background">
   <app-lobby-block [roomState]="roomState" [storage]="storage" [players]="players" [currentPlayer]="currentPlayer"
-    [gameType]="gameType">
+    [gameType]="gameType" [votingBlock]="votingBlock">
   </app-lobby-block>
   <app-voting-block [roomState]="roomState" [storage]="storage" [players]="players" [activePlayers]="activePlayers"
     [currentPlayer]="currentPlayer" [lobbyBlock]="lobbyBlock">
   </app-voting-block>
   <app-players-block [roomState]="roomState" [storage]="storage" [currentPlayer]="currentPlayer"
     [votingBlock]="votingBlock" [players]="players" [activePlayers]="activePlayers"></app-players-block>
-  <app-chat-block [lobbyBlock]="lobbyBlock" [currentPlayer]="currentPlayer"></app-chat-block>
+  <app-chat-block [lobbyBlock]="lobbyBlock" [currentPlayer]="currentPlayer">
+  </app-chat-block>
 </ion-content>

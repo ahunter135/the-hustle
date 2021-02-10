@@ -18,20 +18,31 @@ export class StorageServiceService {
     return await this.dbService.getNotification();
   }
   
-  async createHostUser() {
+  async createHostUser(type) {
     this.hostid = this.generateUID();
     this.roomid = this.generateUID();
     this.roomid = this.roomid.toUpperCase();
 
-    await this.createRoom();
+    if (type == 0) await this.createRoomRemote(type);
+    else await this.createRoom(type);
+  }
+  
+
+  async createRoom(type) {
+    await this.dbService.createRoom(this.roomid, this.hostid, type);
   }
 
-  async createRoom() {
-    this.dbService.createRoom(this.roomid, this.hostid);
+  async createRoomRemote(type) {
+    this.playerid = this.hostid;
+    await this.dbService.createRoomRemote(this.roomid, this.hostid, type);
   }
 
   async updateRoomState(state) {
    return await this.dbService.updateRoomState(this.roomid, state);
+  }
+
+  async updateRoomTimerLength(length) {
+    return await this.dbService.updateRoomTimerLength(this.roomid, length);
   }
 
   async createPlayer(roomcode) {
@@ -78,6 +89,10 @@ export class StorageServiceService {
     return await this.dbService.updateRoomToReveal(this.roomid)
   }
 
+  async toggleShowAnswer(toggle) {
+    return await this.dbService.toggleShowAnswer(this.roomid, toggle);
+  }
+
   async sendMessage(text) {
     return await this.dbService.sendMessage(this.roomid, text);
   }
@@ -93,6 +108,15 @@ export class StorageServiceService {
   async updateRoomTimer(timer) {
     return await this.dbService.updateRoomTimer(timer, this.roomid);
   }
+
+  async updateRoomPlayerVoteStatus(voteStatus) {
+    return await this.dbService.updateRoomPlayerVoteStatus(this.roomid, this.playerid, voteStatus);
+  }
+
+  async updateQuestionVoteArray(aq) {
+    return await this.dbService.updateQuestionVoteArray(this.roomid, aq);
+  }
+
   generateUID() {
     // I generate the UID from two parts here 
     // to ensure the random number provide enough bits.

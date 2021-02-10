@@ -1,0 +1,27 @@
+<ion-card color="primary">
+  <ion-card-header>
+    <ion-card-subtitle>Live Chat
+      <ion-icon (click)="popoutChat($event)" name="arrow-redo" style="color: white; float: right; font-size: 18px;">
+      </ion-icon>
+    </ion-card-subtitle>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-content color="primary" style="min-height: 150px; height:150px; max-height: 150px; overflow: scroll; "
+      id="chat" #scrollMe>
+      <div *ngFor="let message of messages" style="padding-bottom: 5px;" class="message-list">
+        <span>{{message.sender}}:</span><br>
+        <span>{{message.text}}</span>
+      </div>
+    </ion-content>
+
+  </ion-card-content>
+  <ion-item lines="none" style="padding: 0;" color="primary">
+    <ion-input placeholder="Message..." style="overflow-wrap: break-word; width: 100%; font-family: 'dukas';"
+      [(ngModel)]="text" autocapitalize="on" autocomplete="on" autocorrect="on">
+    </ion-input>
+    <ion-button fill="clear" style="width: 30px" (click)="sendMessage(text)" [disabled]="!text">
+      <ion-icon slot="icon-only" color="secondary" name="paper-plane-outline" style="height: 100%; width: 100%;">
+      </ion-icon>
+    </ion-button>
+  </ion-item>
+</ion-card>

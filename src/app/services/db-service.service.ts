@@ -22,8 +22,7 @@ export class DbServiceService {
     return await this.db.collection('notification').doc("1").get();
   }
 
-  async createRoom(roomid, hostid) {
-    console.log(roomid);
+  async createRoom(roomid, hostid, type) {
     await this.db.collection('rooms').doc(roomid).set({
       host: hostid,
       players: [],
@@ -33,7 +32,38 @@ export class DbServiceService {
       private: true,
       messages: [{text: 'Please wait and talk amongst yourselves', sender: 'Host'}],
       created: new Date().toISOString(),
-      timerStarted: false
+      timerStarted: false,
+      revealAnswer: false,
+      gameType: type
+    });
+    this.unsubscribe = this.db.collection("rooms").doc(roomid)
+    .onSnapshot(function(doc) {
+        this.globalService.publishData({key: 'roominfo', value: doc.data()});
+    }.bind(this));
+  }
+
+  async createRoomRemote(roomid, hostid, type) {
+    await this.db.collection('rooms').doc(roomid).set({
+      host: hostid,
+      players: [{
+        id: hostid,
+        name: "",
+        isHustler: false,
+        eliminated: false,
+        voted: false,
+        votes: 0,
+        isHost: true
+      }],
+      activeQuestion: {},
+      state: 0,
+      timeToReveal: false,
+      private: true,
+      messages: [{text: 'Please wait and talk amongst yourselves', sender: 'Host'}],
+      created: new Date().toISOString(),
+      timerStarted: false,
+      revealAnswer: false,
+      gameType: type,
+      timerLength: 60
     });
     this.unsubscribe = this.db.collection("rooms").doc(roomid)
     .onSnapshot(function(doc) {
@@ -44,10 +74,15 @@ export class DbServiceService {
   async joinRoom(roomcode, playerid) {
     let roomData = await this.db.collection('rooms').doc(roomcode).get();
     let players = roomData.data().players;
+    this.globalService.publishData({key: 'wheretogo', value: roomData.data().gameType});
     let playerObj = {
       id: playerid,
       name: "",
-      isHustler: false
+      isHustler: false,
+      eliminated: false,
+      voted: false,
+      votes: 0,
+      isHost: false
     }
     players.push(playerObj);
     await this.db.collection('rooms').doc(roomcode).update({
@@ -69,6 +104,20 @@ export class DbServiceService {
     for (let i = 0; i < players.length; i++) {
       if (players[i].id == playerid) {
         players[i].name = playerName;
+        break;
+      }
+    }
+    return await this.db.collection('rooms').doc(roomid).update({
+      players: players
+    })
+  }
+
+  async updateRoomPlayerVoteStatus(roomid, playerid, voteStatus) {
+    let roomData = await this.db.collection('rooms').doc(roomid).get();
+    let players = roomData.data().players;
+    for (let i = 0; i < players.length; i++) {
+      if (players[i].id == playerid) {
+        players[i].voted = voteStatus;
         break;
       }
     }
@@ -113,6 +162,12 @@ export class DbServiceService {
     })
   }
 
+  async toggleShowAnswer(roomid, toggle) {
+    return await this.db.collection('rooms').doc(roomid).update({
+      revealAnswer: toggle
+    });
+  }
+
   async sendMessage(roomid, text) {
     let roomData = await this.db.collection('rooms').doc(roomid).get();
     let messages = roomData.data().messages;
@@ -131,9 +186,12 @@ export class DbServiceService {
         id: doc.id
       })
     });
-    let numRooms = rooms.length - 1;
-    let randomRoomIndex = Math.floor(Math.random() * numRooms) + 1;
-    return rooms[randomRoomIndex];
+    let numRooms = rooms.length;
+    if (numRooms > 0) {
+      let randomRoomIndex = Math.floor(Math.random() * numRooms) + 1;
+      return rooms[randomRoomIndex - 1];
+    } else return false;
+    
   }
 
   async updateRoomPrivacy(privacy, roomid) {
@@ -145,6 +203,19 @@ export class DbServiceService {
   async updateRoomTimer(timer, roomid) {
     return await this.db.collection('rooms').doc(roomid).update({
       timerStarted: timer
+    })
+  }
+
+  async updateRoomTimerLength(roomid, length) {
+    return await this.db.collection('rooms').doc(roomid).update({
+      timerLength: length,
+      timerStarted: true
+    })
+  }
+
+  async updateQuestionVoteArray(roomid, aq) {
+    return await this.db.collection('rooms').doc(roomid).update({
+      activeQuestion: aq
     })
   }
 
