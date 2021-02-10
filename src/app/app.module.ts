@@ -14,6 +14,7 @@ import { AdMob } from '@admob-plus/ionic';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { OneSignal } from '@ionic-native/onesignal/ngx';
+import { Deeplinks } from '@ionic-native/deeplinks/ngx';
 
 var firebaseConfig = {
   apiKey: "AIzaSyCLTnNoAXOI3E13j_doKmRFM8gpkTl4yBM",
@@ -40,6 +41,7 @@ firebase.initializeApp(firebaseConfig);
     Keyboard,
     Clipboard,
     OneSignal,
+    Deeplinks,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]
