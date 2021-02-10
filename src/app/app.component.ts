@@ -7,7 +7,7 @@ import { DbServiceService } from './services/db-service.service';
 import { AdMob } from '@admob-plus/ionic';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { OneSignal } from '@ionic-native/onesignal/ngx';
-import { Deeplinks } from '@ionic-native/deeplinks/ngx';
+import { LaunchReview } from '@ionic-native/launch-review/ngx';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +23,7 @@ export class AppComponent {
     private admob: AdMob,
     private keyboard: Keyboard,
     private oneSignal: OneSignal,
-    private deeplinks: Deeplinks
+    private launchReview: LaunchReview
   ) {
     this.initializeApp();
   }
@@ -44,7 +44,6 @@ export class AppComponent {
       this.dbService.setupDBConnection();
 
       this.setupOneSignal();
-      this.setupDeeplinks();
     });
   }
 
@@ -55,33 +54,23 @@ export class AppComponent {
 
     this.oneSignal.inFocusDisplaying(this.oneSignal.OSInFocusDisplayOption.InAppAlert);
 
+    this.oneSignal.handleInAppMessageClicked().subscribe((data) => {
+      if (data.click_name == 'review') {
+        this.launchReview.launch();
+      }
+    })
+
     this.oneSignal.handleNotificationReceived().subscribe(() => {
     // do something when notification is received
     });
 
-    this.oneSignal.handleNotificationOpened().subscribe(() => {
+    this.oneSignal.handleNotificationOpened().subscribe((data) => {
       // do something when a notification is opened
+        if (data.notification.payload.additionalData.review) {
+          this.launchReview.launch();
+        }
     });
 
     this.oneSignal.endInit();
-  }
-
-  setupDeeplinks() {
-    this.deeplinks.route({ '/review':  '/'}).subscribe(
-      match => {
-        console.log('Successfully matched route', match);
-
-      },
-      nomatch => {
-        // nomatch.$link - the full link data
-        if (nomatch.$link.host.includes('review')) {
-          if (this.platform.is('ios')) {
-            window.open("https://apps.apple.com/us/app/the-hustle-trivia-party-game/id1550992232","_system");
-          } else {
-            window.open("https://play.google.com/store/apps/details?id=com.austinhunter.thehustle","_system");
-          }
-        }
-      }
-    );
   }
 }
