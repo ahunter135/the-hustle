@@ -149,7 +149,7 @@ export class GameScreenPage implements OnInit {
     this.admob.interstitial.load({
       id: {
         android: 'ca-app-pub-7853858495093513/7091063908',
-        ios: 'ca-app-pub-7853858495093513/3151818890'
+        ios: 'ca-app-pub-8417638044172769/1204515667'
       }
     }).then((res) => {
       this.admob.interstitial.show().then(() => {

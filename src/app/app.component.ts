@@ -37,7 +37,7 @@ export class AppComponent {
       this.admob.setDevMode(false);
       this.admob.banner.show({
         id: {
-          ios: "ca-app-pub-7853858495093513/2510882577",
+          ios: "ca-app-pub-8417638044172769/6007902749",
           android: "ca-app-pub-7853858495093513/6641699272"
         }
       });
@@ -68,6 +68,9 @@ export class AppComponent {
       // do something when a notification is opened
         if (data.notification.payload.additionalData.review) {
           this.launchReview.launch();
+        } else if (data.notification.payload.additionalData.roomcode) {
+          let code = data.notification.payload.additionalData.roomcode;
+          alert(code);
         }
     });
 
