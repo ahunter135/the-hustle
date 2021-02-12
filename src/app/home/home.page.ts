@@ -32,7 +32,6 @@ export class HomePage {
     });
     let notif = await this.storage.getNotification();
     this.notification = notif.data();
-// ios
   }
 
   async startGame() {

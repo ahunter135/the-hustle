@@ -84,9 +84,9 @@
     <div>Please enter your name while you wait.</div>
     <ion-item color="primary">
       <ion-input placeholder="Enter your name" autocapitalize="on" autocomplete="on" autocorrect="on"
-        [(ngModel)]="playerName">
+        [(ngModel)]="nametext">
       </ion-input>
-      <ion-button slot="end" color="success" (click)="updatePlayerName(playerName)">Submit</ion-button>
+      <ion-button slot="end" color="success" (click)="updatePlayerName(nametext)">Submit</ion-button>
     </ion-item>
   </ion-card-content>
 </ion-card>

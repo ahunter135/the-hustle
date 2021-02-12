@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { AlertController } from '@ionic/angular';
 import { LobbyBlockComponent } from '../lobby-block/lobby-block.component';
 
 @Component({
@@ -19,7 +20,10 @@ export class VotingBlockComponent implements OnInit {
   numVotes = 0;
   isEliminated = false;
   voted = false;
-  constructor() { }
+  shownElimination = false;
+  constructor(
+    private alertCtrl: AlertController
+  ) { }
 
   ngOnInit() {}
 
@@ -48,6 +52,26 @@ export class VotingBlockComponent implements OnInit {
     }
 
     this.voted = true;
+  }
+
+  async showElimination() {
+    if (!this.shownElimination) {
+      this.shownElimination = true;
+      const alert = await this.alertCtrl.create({
+        header: 'You\'ve been eliminated!',
+        message: 'But don\'t worry! You can still vote in the final showdown to try and catch the Liar!',
+        buttons: [
+          {
+            text: 'Okay',
+            handler: () => {
+              console.log('Confirm Okay');
+            }
+          }
+        ]
+      });
+  
+      await alert.present();
+    }
   }
 
 }

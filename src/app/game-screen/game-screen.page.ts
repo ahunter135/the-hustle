@@ -66,6 +66,9 @@ export class GameScreenPage implements OnInit {
         if (this.players[i].id == playerId) {
           this.votingBlock.isEliminated = this.players[i].eliminated;
           this.lobbyBlock.playerName = this.players[i].name;
+          if (this.votingBlock.isEliminated) {
+            this.votingBlock.showElimination();
+          }
         }
 
         if (!this.players[i].eliminated) this.activePlayers.push(this.players[i]);
@@ -148,7 +151,7 @@ export class GameScreenPage implements OnInit {
     this.lobbyBlock.presentLoader();
     this.admob.interstitial.load({
       id: {
-        android: 'ca-app-pub-7853858495093513/7091063908',
+        android: 'ca-app-pub-8417638044172769/2470631346',
         ios: 'ca-app-pub-8417638044172769/1204515667'
       }
     }).then((res) => {

@@ -8,6 +8,7 @@ import { AdMob } from '@admob-plus/ionic';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { OneSignal } from '@ionic-native/onesignal/ngx';
 import { LaunchReview } from '@ionic-native/launch-review/ngx';
+import { StorageServiceService } from './services/storage-service.service';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +24,8 @@ export class AppComponent {
     private admob: AdMob,
     private keyboard: Keyboard,
     private oneSignal: OneSignal,
-    private launchReview: LaunchReview
+    private launchReview: LaunchReview,
+    private storage: StorageServiceService
   ) {
     this.initializeApp();
   }
@@ -38,7 +40,7 @@ export class AppComponent {
       this.admob.banner.show({
         id: {
           ios: "ca-app-pub-8417638044172769/6007902749",
-          android: "ca-app-pub-7853858495093513/6641699272"
+          android: "ca-app-pub-8417638044172769/3783713016"
         }
       });
       this.dbService.setupDBConnection();
@@ -64,13 +66,14 @@ export class AppComponent {
     // do something when notification is received
     });
 
-    this.oneSignal.handleNotificationOpened().subscribe((data) => {
+    this.oneSignal.handleNotificationOpened().subscribe(async (data) => {
       // do something when a notification is opened
         if (data.notification.payload.additionalData.review) {
           this.launchReview.launch();
         } else if (data.notification.payload.additionalData.roomcode) {
           let code = data.notification.payload.additionalData.roomcode;
-          alert(code);
+          await this.storage.createPlayer(code);
+          this.storage.playerType = 1;
         }
     });
 
