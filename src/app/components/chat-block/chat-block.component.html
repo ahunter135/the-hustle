@@ -10,7 +10,10 @@
       id="chat" #scrollMe>
       <div *ngFor="let message of messages" style="padding-bottom: 5px;" class="message-list">
         <span>{{message.sender}}:</span><br>
-        <span>{{message.text}}</span>
+        <span *ngIf="message.type == 0">{{message.text}}</span>
+        <audio id="player" controls="controls" *ngIf="message.type == 1">
+          <source [src]="message.text" type="audio/mpeg" />
+        </audio>
       </div>
     </ion-content>
 

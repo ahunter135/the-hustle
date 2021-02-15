@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
-import { Platform } from '@ionic/angular';
 import firebase from 'firebase';
 import { GlobalService } from './global.service';
+import * as moment from 'moment';
+import { uniqueNamesGenerator, Config, adjectives, colors, animals } from 'unique-names-generator';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DbServiceService {
   db;
+  store;
   roomInfo = <any>{};
   unsubscribe;
   constructor(private globalService: GlobalService) { 
@@ -16,6 +18,7 @@ export class DbServiceService {
 
   setupDBConnection() {
     this.db = firebase.firestore();
+    this.store = firebase.storage();
   }
 
   async getNotification() {
@@ -30,7 +33,7 @@ export class DbServiceService {
       state: 0,
       timeToReveal: false,
       private: true,
-      messages: [{text: 'Please wait and talk amongst yourselves', sender: 'Host'}],
+      messages: [{text: 'Please wait and talk amongst yourselves', sender: 'Host', type: 0}],
       created: new Date().toISOString(),
       timerStarted: false,
       revealAnswer: false,
@@ -43,11 +46,17 @@ export class DbServiceService {
   }
 
   async createRoomRemote(roomid, hostid, type) {
+    const customConfig: Config = {
+      dictionaries: [adjectives, animals],
+      separator: ' ',
+      length: 2,
+    };
+    const shortName: string = uniqueNamesGenerator(customConfig); 
     await this.db.collection('rooms').doc(roomid).set({
       host: hostid,
       players: [{
         id: hostid,
-        name: "",
+        name: shortName,
         isHustler: false,
         eliminated: false,
         voted: false,
@@ -58,7 +67,7 @@ export class DbServiceService {
       state: 0,
       timeToReveal: false,
       private: true,
-      messages: [{text: 'Please wait and talk amongst yourselves', sender: 'Host'}],
+      messages: [{text: 'Please wait and talk amongst yourselves', sender: shortName, type: 0}],
       created: new Date().toISOString(),
       timerStarted: false,
       revealAnswer: false,
@@ -74,12 +83,19 @@ export class DbServiceService {
   async joinRoom(roomcode, playerid) {
     let roomData = await this.db.collection('rooms').doc(roomcode).get();
     let players = roomData.data().players;
+    let state = roomData.data().state;
+    const customConfig: Config = {
+      dictionaries: [adjectives, animals],
+      separator: ' ',
+      length: 2,
+    };
+    const shortName: string = uniqueNamesGenerator(customConfig); 
     this.globalService.publishData({key: 'wheretogo', value: roomData.data().gameType});
     let playerObj = {
       id: playerid,
-      name: "",
+      name: shortName,
       isHustler: false,
-      eliminated: false,
+      eliminated: state != 0 ? true : false,
       voted: false,
       votes: 0,
       isHost: false
@@ -95,6 +111,13 @@ export class DbServiceService {
   }
 
   async deleteRoom(roomcode) {
+    let storageRef = firebase.storage().ref();
+    storageRef.child(roomcode).listAll().then(dir => {
+      dir.items.forEach(fileRef => {
+        storageRef.child(roomcode).child(fileRef.name).delete();
+      });
+    }).catch((err) => {
+    });
    return await this.db.collection('rooms').doc(roomcode).delete();
   }
 
@@ -217,6 +240,27 @@ export class DbServiceService {
     return await this.db.collection('rooms').doc(roomid).update({
       activeQuestion: aq
     })
+  }
+
+  async uploadAudioMessage(obj, fileDir, roomid) {
+    return new Promise((resolve, reject) => {
+      let storageRef = this.store.ref().child(roomid).child(moment().format());
+      let uploadTask = storageRef.putString(fileDir, "data_url");
+
+      uploadTask.on(
+        "state_changed",
+        (_snapshot: any) => {
+
+        },
+        _error => {
+          reject(_error);
+        },
+        () => {
+          // completion...
+          resolve(uploadTask.snapshot);
+        }
+      );
+    });
   }
 
   unsubscribeFromRoom() {

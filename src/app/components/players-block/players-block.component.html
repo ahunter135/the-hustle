@@ -16,7 +16,7 @@
       </ng-template>
 
       <ion-button (click)="remove(i)" slot="end" style="z-index: 99"
-        *ngIf="roomState == 0 && currentPlayer.playerType == 0">
+        *ngIf="roomState == 0 && currentPlayer.playerType == 0 && player.id != currentPlayer.playerId">
         <ion-icon slot="icon-only" name="close-circle" color="secondary">
         </ion-icon>
       </ion-button>

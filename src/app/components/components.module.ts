@@ -7,6 +7,7 @@ import { ChatPopoverComponent } from '../modals/chat-popover/chat-popover.compon
 import { ChatBlockComponent } from './chat-block/chat-block.component';
 import { LobbyBlockComponent } from './lobby-block/lobby-block.component';
 import { PlayersBlockComponent } from './players-block/players-block.component';
+import { RecordAudioComponent } from './record-audio/record-audio.component';
 import { VotingBlockComponent } from './voting-block/voting-block.component';
 
 @NgModule({
@@ -15,8 +16,8 @@ import { VotingBlockComponent } from './voting-block/voting-block.component';
     FormsModule,
     IonicModule
   ],
-  declarations: [ChatPopoverComponent, LobbyBlockComponent, VotingBlockComponent, ChatBlockComponent, PlayersBlockComponent],
-  entryComponents: [ChatPopoverComponent, LobbyBlockComponent, VotingBlockComponent, ChatBlockComponent, PlayersBlockComponent],
-  exports: [ChatPopoverComponent, LobbyBlockComponent, VotingBlockComponent, ChatBlockComponent, PlayersBlockComponent]
+  declarations: [ChatPopoverComponent, LobbyBlockComponent, VotingBlockComponent, ChatBlockComponent, PlayersBlockComponent, RecordAudioComponent],
+  entryComponents: [ChatPopoverComponent, LobbyBlockComponent, VotingBlockComponent, ChatBlockComponent, PlayersBlockComponent, RecordAudioComponent],
+  exports: [ChatPopoverComponent, LobbyBlockComponent, VotingBlockComponent, ChatBlockComponent, PlayersBlockComponent, RecordAudioComponent]
 })
 export class ComponentsModule {}

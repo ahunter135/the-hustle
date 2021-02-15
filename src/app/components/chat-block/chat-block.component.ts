@@ -49,7 +49,8 @@ export class ChatBlockComponent implements OnInit {
 
     let obj = {
       text: text,
-      sender: sender
+      sender: sender,
+      type: 0
     }
     await this.storage.sendMessage(obj);
     this.text = "";

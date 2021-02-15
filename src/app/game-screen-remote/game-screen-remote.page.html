@@ -5,7 +5,7 @@
         <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title color="dark" style="font-family: 'metro';">
+    <ion-title color="dark" style="font-family: 'picas';">
       The Hustle
     </ion-title>
     <ion-buttons slot="end">
@@ -18,7 +18,7 @@
 
 <ion-content class="background">
   <app-lobby-block [roomState]="roomState" [storage]="storage" [players]="players" [currentPlayer]="currentPlayer"
-    [gameType]="gameType" [votingBlock]="votingBlock">
+    [gameType]="gameType" [votingBlock]="votingBlock" [activePlayers]="activePlayers">
   </app-lobby-block>
   <app-voting-block [roomState]="roomState" [storage]="storage" [players]="players" [activePlayers]="activePlayers"
     [currentPlayer]="currentPlayer" [lobbyBlock]="lobbyBlock">
@@ -28,3 +28,4 @@
   <app-chat-block [lobbyBlock]="lobbyBlock" [currentPlayer]="currentPlayer">
   </app-chat-block>
 </ion-content>
+<app-record-audio [lobbyBlock]="lobbyBlock" [currentPlayer]="currentPlayer"></app-record-audio>

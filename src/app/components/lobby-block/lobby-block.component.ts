@@ -142,12 +142,23 @@ export class LobbyBlockComponent implements OnInit {
     if (!this.timerStarted) {
       this.timerStarted = true;
       this.interval = setInterval(async () => {
+        
+        if (this.roomState == 4 && this.currentPlayer.playerType == 0 && !this.answerRevealed) {
+          let vote = 0;
+          for (let i = 0; i < this.activeQuestion.voteArray.length; i++) {
+            vote += this.activeQuestion.voteArray[i];
+          }
+          console.log(vote);
+          if (vote >= this.activePlayers.length) {
+            this.time = 0;
+          }
+        }
         if (this.time >= 0)
           this.time--;
         else this.time = 0;
         if (this.time <= 0) {
           if (this.roomState == 1 && this.currentPlayer.playerType == 0 && !this.answerRevealed) {
-            await this.storage.updateRoomTimerLength(35);
+            await this.storage.updateRoomTimerLength(15);
             await this.storage.updateRoomTimer(false);
             await this.storage.updateRoomState(4);
             return;
