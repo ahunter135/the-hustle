@@ -39,7 +39,7 @@
           <ion-button expand="block" color="danger" (click)="cancelHost()">Cancel</ion-button>
         </ion-col>
         <ion-col>
-          <ion-button expand="block" color="success" (click)="begin()" [disabled]="players.length < 4">Begin
+          <ion-button expand="block" color="success" (click)="begin()" [disabled]="players.length < 3">Begin
           </ion-button>
         </ion-col>
       </ion-row>
@@ -127,6 +127,8 @@
           [innerHTML]="q"></span>
         <span slot="end">{{activeQuestion.voteArray[i]}}</span>
       </ion-item>
+      <!-- <ion-button color="success" expand="block" (click)="readyUp()">Ready
+      </ion-button>-->
     </ion-list>
   </ion-card-content>
 </ion-card>

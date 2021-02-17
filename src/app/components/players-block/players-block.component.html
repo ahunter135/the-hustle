@@ -34,6 +34,8 @@
         <ion-col>
           <ion-button expand="block" color="success" (click)="revealHustler()" [hidden]="timeToReveal">Reveal Liar
           </ion-button>
+          <ion-button expand="block" color="success" (click)="playAgain()" [hidden]="!timeToReveal">Play Again
+          </ion-button>
           <ion-button expand="block" color="success" (click)="cancel()">Exit</ion-button>
         </ion-col>
       </ion-row>
