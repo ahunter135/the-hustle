@@ -85,8 +85,8 @@ export class StorageServiceService {
     return await this.dbService.updateRoomPlayers(this.roomid, players, eliminatedPlayer);
   }
 
-  async updateRoomToReveal() {
-    return await this.dbService.updateRoomToReveal(this.roomid)
+  async updateRoomToReveal(flag) {
+    return await this.dbService.updateRoomToReveal(this.roomid, flag)
   }
 
   async toggleShowAnswer(toggle) {

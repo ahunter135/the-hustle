@@ -168,7 +168,7 @@ export class LobbyBlockComponent implements OnInit {
           }
 
           if (this.roomState == 5 && this.currentPlayer.playerType == 0 && this.answerRevealed) {
-            await this.storage.updateRoomTimerLength(60);
+            await this.storage.updateRoomTimerLength(10);
             await this.storage.updateRoomTimer(false);
             await this.storage.toggleShowAnswer(false);
             await this.storage.updateRoomState(1);
@@ -182,7 +182,7 @@ export class LobbyBlockComponent implements OnInit {
 
           if (this.roomState == 2 && this.currentPlayer.playerType == 0) {
             if (this.votingBlock.eliminatedPlayer) {
-              await this.storage.updateRoomTimerLength(60);
+              await this.storage.updateRoomTimerLength(10);
               await this.storage.updateRoomTimer(false);
               await this.storage.toggleShowAnswer(false);
               this.votingBlock.removePlayerThenNext();

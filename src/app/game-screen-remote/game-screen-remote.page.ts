@@ -74,6 +74,9 @@ export class GameScreenRemotePage implements OnInit {
       }
 
       this.lobbyBlock.activeQuestion = roomData.activeQuestion;
+      if (this.roomState != prevState) {
+        this.votingBlock.voted = false;
+      }
 
       if (roomData.timerStarted && this.roomState != 3 && this.roomState != 0) {
         if (this.gameType == 1) this.lobbyBlock.startTimer(roomData.timerStarted);

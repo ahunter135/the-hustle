@@ -179,9 +179,9 @@ export class DbServiceService {
     })
   }
 
-  async updateRoomToReveal(roomid) {
+  async updateRoomToReveal(roomid, flag) {
     return await this.db.collection('rooms').doc(roomid).update({
-      timeToReveal: true
+      timeToReveal: flag
     })
   }
 

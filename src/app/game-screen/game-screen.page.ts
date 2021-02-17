@@ -80,7 +80,7 @@ export class GameScreenPage implements OnInit {
       }
 
       if (data.value.timeToReveal) {
-        this.playersBlock.timeToReveal = true;
+        this.playersBlock.timeToReveal = data.value.timeToReveal;
       }
 
       if (data.value.revealAnswer) {

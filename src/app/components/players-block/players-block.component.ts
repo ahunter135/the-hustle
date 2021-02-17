@@ -1,4 +1,6 @@
+import { AdMob } from '@admob-plus/ionic';
 import { Component, Input, OnInit } from '@angular/core';
+import { Platform } from '@ionic/angular';
 import { VotingBlockComponent } from '../voting-block/voting-block.component';
 
 @Component({
@@ -16,7 +18,7 @@ export class PlayersBlockComponent implements OnInit {
 
   timeToReveal = false;
 
-  constructor() { }
+  constructor(private platform: Platform, private admob: AdMob) { }
 
   ngOnInit() {}
 
@@ -37,8 +39,44 @@ export class PlayersBlockComponent implements OnInit {
   }
 
   async revealHustler() {
-    await this.storage.updateRoomToReveal();
+    await this.storage.updateRoomToReveal(true);
   }
+
+  async playAgain() {    
+    if (!this.platform.is('cordova')) {
+      await this.storage.updateRoomState(0);  
+      await this.storage.updateRoomTimer(false);
+      await this.storage.toggleShowAnswer(false);
+      await this.storage.updateRoomToReveal(false);
+      return
+    }
+
+    this.admob.interstitial.load({
+      id: {
+        android: 'ca-app-pub-8417638044172769/2470631346',
+        ios: 'ca-app-pub-8417638044172769/1204515667'
+      }
+    }).then((res) => {
+      this.admob.interstitial.show().then(async () => {
+        await this.storage.updateRoomState(0);  
+        await this.storage.updateRoomTimer(false);
+        await this.storage.toggleShowAnswer(false);
+        await this.storage.updateRoomToReveal(false);
+      }, async (reason) => {
+        await this.storage.updateRoomState(0);  
+        await this.storage.updateRoomTimer(false);
+        await this.storage.toggleShowAnswer(false);
+        await this.storage.updateRoomToReveal(false);
+      });
+    }, async (reason) => {      
+      await this.storage.updateRoomState(0);  
+      await this.storage.updateRoomTimer(false);
+      await this.storage.toggleShowAnswer(false);
+      await this.storage.updateRoomToReveal(false);
+    }).catch(() => {
+    });
+    return;
+}
 
   async cancel() {
     await this.storage.deleteRoom();
