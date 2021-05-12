@@ -41,13 +41,13 @@
       </ion-list>
     </ion-card-content>
   </ion-card>
-  <ion-card color="primary" *ngIf="state == 'song-playing'">
+  <ion-card color="primary" *ngIf="state == 'song-playing' || state == 'countdown'">
     <ion-card-header>
       <ion-card-subtitle>Playing as: </ion-card-subtitle>
       <ion-card-title>Playing against: </ion-card-title>
     </ion-card-header>
     <ion-card-content>
-
+      <span *ngIf="timer > 0" style="text-align: center; font-size: 40px;">{{timer}}</span>
     </ion-card-content>
   </ion-card>
 

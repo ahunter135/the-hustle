@@ -6,6 +6,8 @@ import { LoadingController, Platform } from '@ionic/angular';
 import { DbServiceService } from '../services/db-service.service';
 import { AnimationOptions } from 'ngx-lottie';
 import { AnimationItem } from 'lottie-web';
+import { SpeechRecognition } from '@ionic-native/speech-recognition/ngx';
+
 @Component({
   selector: 'app-name-that-song',
   templateUrl: './name-that-song.page.html',
@@ -21,19 +23,41 @@ export class NameThatSongPage implements OnInit {
     name: 'wave'
   };
   waveAnimation;
-  constructor(public loadingController: LoadingController, private platform: Platform, private admob: AdMob, private router: Router, private onesignal: OneSignal, private dbService: DbServiceService) { }
+  recording = false;
+  timer;
+  constructor(public loadingController: LoadingController, private platform: Platform, private admob: AdMob, private router: Router, private onesignal: OneSignal, private dbService: DbServiceService,
+    private speechRecognition: SpeechRecognition) { }
 
   async ngOnInit() {}
 
+  /**
+   * Use this function to do any state specific stuff.
+   * Example: when moving to "home" make sure to clear all timers, etc.
+   * When moving to count down, set timer and start it.
+   * 
+   */
   stateChanged() {
+    if (this.state == 'countdown') {
+      this.timer = 5
+      var myfunc = setInterval(function() {
+        this.timer = this.timer - 1;
+        if (this.timer <= 0) {
+          clearInterval(myfunc);
+          this.state = 'song-playing';
+        }
+      }.bind(this), 1000)
+    } else if (this.state == 'song-playing') {
 
+    } else if (this.state == 'song-stopped') {
+      this.waveAnimation.stop();
+    }
   }
 
   animationCreated(animationItem: AnimationItem): void {
-    console.log(animationItem);
     animationItem.resize();
     if (animationItem.name == 'wave') {
       this.waveAnimation = animationItem;
+      animationItem.play();
     }
   }
 
@@ -59,7 +83,7 @@ export class NameThatSongPage implements OnInit {
   async getGameData(id) {
     let game = await this.dbService.getGameData(id);
     console.log(game);
-    this.state = "song-playing"
+    this.state = "countdown"
     this.stateChanged();
     /**
      * So we got the game data here. What should we do next?
@@ -67,6 +91,43 @@ export class NameThatSongPage implements OnInit {
      * Display the opponent name. Display the name of current user. Hint: (this.dbService.playerName);
      */
   }
+   async down() {
+     let isAvailable = await this.speechRecognition.isRecognitionAvailable();
+     if (isAvailable) {
+      let hasPermission = await this.speechRecognition.hasPermission();
+
+      if (!hasPermission) {
+        // Request permissions
+        this.speechRecognition.requestPermission()
+        .then(
+          () => {
+            this.recording = true;
+            this.startListening();
+          },
+          () => {return}
+        )
+      } else {
+        this.recording = true;
+        this.startListening();
+      }
+     } else return;
+   }
+
+   async startListening() {
+    this.speechRecognition.startListening({
+      language: 'EN-US',
+      matches: 2,
+    })
+    .subscribe(
+      (matches: string[]) => console.log(matches),
+      (onerror) => console.log('error:', onerror)
+    )
+   }
+
+   async up() {
+    this.recording = false;
+    this.speechRecognition.stopListening()
+   }
   
   async cancel() {
     /**
