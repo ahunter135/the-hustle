@@ -33,11 +33,24 @@ export class NameThatSongPage implements OnInit {
     await this.loader.dismiss();
   }
 
+  /**
+   * What to solve:
+   * - How to get game data from Deezer api
+   *    Should it be from firebase or straight http calls?
+   * - If straight http calls, how would I store player data to firebase for future?
+   * - If firebase, how would I get the http calls onto firebase?
+   * 
+   * I also want to add https://ionicframework.com/docs/native/speech-recognition for players to answer.
+   * Think song quiz but on a mobile app instead of Alexa
+   */
   async getGameData() {
     // call http services to get all the game data necessary
   }
   
   async cancel() {
+    /**
+     * Add an "Are you sure?" button here
+     */
     await this.showAdAndLeave();
   }
 
