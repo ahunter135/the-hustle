@@ -45,7 +45,7 @@ export class NameThatSongPage implements OnInit {
     /**
      * So we got the game data here. What should we do next?
      * 
-     * Display the opponent. Display their name. (this.dbService.playerName);
+     * Display the opponent name. Display the name of current user. Hint: (this.dbService.playerName);
      */
   }
   
