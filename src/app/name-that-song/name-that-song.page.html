@@ -17,6 +17,9 @@
 </ion-header>
 
 <ion-content class="background">
+  <ng-lottie *ngIf="state == 'song-playing'" style="display: block; margin: auto; width: 50%" [options]="options"
+    (animationCreated)="animationCreated($event)">
+  </ng-lottie>
   <ion-card color="primary" *ngIf="state == 'home'">
     <ion-card-header>
       <ion-card-title>Pick a Category</ion-card-title>
@@ -38,6 +41,14 @@
       </ion-list>
     </ion-card-content>
   </ion-card>
-  <ion-card color="primary" *ngIf="state == 'game'"></ion-card>
+  <ion-card color="primary" *ngIf="state == 'song-playing'">
+    <ion-card-header>
+      <ion-card-subtitle>Playing as: </ion-card-subtitle>
+      <ion-card-title>Playing against: </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+
+    </ion-card-content>
+  </ion-card>
 
 </ion-content>

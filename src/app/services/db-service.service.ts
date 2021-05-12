@@ -281,13 +281,7 @@ export class DbServiceService {
     let limit = snapshot.size;
 
     let randomIndex = Math.floor(Math.random() * (limit - 1));
-    for (var i = 0; i < snapshot.docs.length; i++) {
-      const doc = snapshot.docs[i]
-      let temp = doc.data();
-      if (i == randomIndex) {
-        return temp;
-          break
-      }
-    }
+    const doc = snapshot.docs[randomIndex]
+    return doc.data();
   }
 }

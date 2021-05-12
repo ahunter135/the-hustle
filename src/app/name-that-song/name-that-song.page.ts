@@ -4,7 +4,8 @@ import { Router } from '@angular/router';
 import { OneSignal } from '@ionic-native/onesignal/ngx';
 import { LoadingController, Platform } from '@ionic/angular';
 import { DbServiceService } from '../services/db-service.service';
-
+import { AnimationOptions } from 'ngx-lottie';
+import { AnimationItem } from 'lottie-web';
 @Component({
   selector: 'app-name-that-song',
   templateUrl: './name-that-song.page.html',
@@ -13,10 +14,17 @@ import { DbServiceService } from '../services/db-service.service';
 export class NameThatSongPage implements OnInit {
   loader;
   state = "home";
+  options: AnimationOptions = {
+    path: '/assets/animations/wave.json',
+    autoplay: false,
+    loop: true
+  };
   constructor(public loadingController: LoadingController, private platform: Platform, private admob: AdMob, private router: Router, private onesignal: OneSignal, private dbService: DbServiceService) { }
 
-  async ngOnInit() {
-   
+  async ngOnInit() {}
+
+  stateChanged() {
+
   }
 
   async pickCategory(id) {
@@ -41,7 +49,8 @@ export class NameThatSongPage implements OnInit {
   async getGameData(id) {
     let game = await this.dbService.getGameData(id);
     console.log(game);
-    this.state = "game"
+    this.state = "song-playing"
+    this.stateChanged();
     /**
      * So we got the game data here. What should we do next?
      * 
