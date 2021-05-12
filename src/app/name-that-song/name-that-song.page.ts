@@ -28,6 +28,8 @@ export class NameThatSongPage implements OnInit {
   gameData;
   round = 1;
   currentSong;
+  player;
+  opponent;
   constructor(public loadingController: LoadingController, private platform: Platform, private admob: AdMob, private router: Router, private onesignal: OneSignal, private dbService: DbServiceService,
     private speechRecognition: SpeechRecognition) { }
 
@@ -98,6 +100,8 @@ export class NameThatSongPage implements OnInit {
   async getGameData(id) {
     this.gameData = await this.dbService.getGameData(id);
     console.log(this.gameData);
+    this.player = this.dbService.playerName;
+    this.opponent = this.gameData.player.name;
     this.state = "countdown"
     this.stateChanged();
     /**
