@@ -37,8 +37,17 @@ export class HomePage {
   async startGame() {
     let alert = await this.alertCtrl.create({
       header: 'Lobby Type',
-      message: 'Would you like to play an in-person game or remote online game? See rules for the difference.',
+      message: 'What type of game would you like to play? See rules for the difference.',
       buttons: [
+        {
+          text: 'Name that Song',
+          handler: async () => {
+            
+            this.router.navigateByUrl("/name-that-song", {
+              replaceUrl: true
+            })
+          }
+        },
         {
           text: 'Remote',
           handler: async () => {
