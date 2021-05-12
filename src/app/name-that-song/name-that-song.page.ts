@@ -28,6 +28,28 @@ export class NameThatSongPage implements OnInit {
   gameData;
   round = 1;
   currentSong;
+  
+
+  /**
+   * the gimmick will be that as the player answers, we will store if they got it right or wrong like so, 0 = wrong, 1 = right.
+   * Then when the game is over, send the object to the backend like so
+   * categories/{genre}/games/{new_id} -> {
+   *   player: {name: "", correctAnswers: []},
+   *   tracks: <use tracks from this.gameData
+   * }
+   */
+
+
+  /**
+   * 
+   * @param loadingController 
+   * @param platform 
+   * @param admob 
+   * @param router 
+   * @param onesignal 
+   * @param dbService 
+   * @param speechRecognition 
+   */
   constructor(public loadingController: LoadingController, private platform: Platform, private admob: AdMob, private router: Router, private onesignal: OneSignal, private dbService: DbServiceService,
     private speechRecognition: SpeechRecognition) { }
 
@@ -76,6 +98,10 @@ export class NameThatSongPage implements OnInit {
     }
   }
 
+  /**
+   * 
+   * @param id 
+   */
   async pickCategory(id) {
     // id is category string of firebase
     this.state = 'loading';
