@@ -17,14 +17,24 @@ export class NameThatSongPage implements OnInit {
   options: AnimationOptions = {
     path: '/assets/animations/wave.json',
     autoplay: false,
-    loop: true
+    loop: true,
+    name: 'wave'
   };
+  waveAnimation;
   constructor(public loadingController: LoadingController, private platform: Platform, private admob: AdMob, private router: Router, private onesignal: OneSignal, private dbService: DbServiceService) { }
 
   async ngOnInit() {}
 
   stateChanged() {
 
+  }
+
+  animationCreated(animationItem: AnimationItem): void {
+    console.log(animationItem);
+    animationItem.resize();
+    if (animationItem.name == 'wave') {
+      this.waveAnimation = animationItem;
+    }
   }
 
   async pickCategory(id) {

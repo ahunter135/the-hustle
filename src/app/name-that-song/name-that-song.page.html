@@ -51,4 +51,12 @@
     </ion-card-content>
   </ion-card>
 
+  <ion-fab vertical="bottom" horizontal="center">
+    <ion-fab-button (click)="down()" *ngIf="!recording">
+      <ion-icon name="mic"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button (click)="up()" *ngIf="recording" color="danger">
+      <ion-icon name="mic-off"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
