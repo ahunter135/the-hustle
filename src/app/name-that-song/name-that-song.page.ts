@@ -11,12 +11,18 @@ import { LoadingController, Platform } from '@ionic/angular';
 })
 export class NameThatSongPage implements OnInit {
   loader;
-  isLoading = false;
+  state = "home";
   constructor(public loadingController: LoadingController, private platform: Platform, private admob: AdMob, private router: Router, private onesignal: OneSignal) { }
 
   async ngOnInit() {
+   
+  }
+
+  async pickCategory(id) {
+    // id is category string of firebase
+    this.state = 'loading';
     await this.presentLoading();
-    await this.getGameData();
+    await this.getGameData(id);
     await this.loader.dismiss();
   }
 
@@ -25,8 +31,6 @@ export class NameThatSongPage implements OnInit {
       message: 'Finding Player'
     });
     await this.loader.present();
-
-    this.isLoading = true;
   }
 
   async dismissLoading() {
@@ -43,8 +47,12 @@ export class NameThatSongPage implements OnInit {
    * I also want to add https://ionicframework.com/docs/native/speech-recognition for players to answer.
    * Think song quiz but on a mobile app instead of Alexa
    */
-  async getGameData() {
-    // call http services to get all the game data necessary
+  async getGameData(id) {
+    // call firebase and get a random game within the category of id
+    //format: categories/{id}/games/{get random game here}
+    // deezer api is: 
+    // https://api.deezer.com/radio/{radio_id}/tracks
+    // alt = 30781, rock = 30891, rap = 42302, pop = 31061
   }
   
   async cancel() {

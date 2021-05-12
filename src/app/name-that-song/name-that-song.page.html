@@ -9,11 +9,34 @@
       The Hustle
     </ion-title>
     <ion-buttons slot="end">
-
+      <ion-button (click)="copyToClipboard()" color="dark">
+        <ion-icon slot="icon-only" name="share-outline"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="background">
+  <ion-card color="primary" *ngIf="state == 'home'">
+    <ion-card-header>
+      <ion-card-title>Pick a Category</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item color="primary" button (click)="pickCategory('indie')">
+          Alternative
+        </ion-item>
+        <ion-item color="primary" button (click)="pickCategory('rock')">
+          Rock
+        </ion-item>
+        <ion-item color="primary" button (click)="pickCategory('pop')">
+          Pop
+        </ion-item>
+        <ion-item color="primary" button (click)="pickCategory('rap')">
+          Rap
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
 
 </ion-content>
