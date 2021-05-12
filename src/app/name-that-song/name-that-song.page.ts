@@ -41,7 +41,7 @@ export class NameThatSongPage implements OnInit {
   async getGameData(id) {
     let game = await this.dbService.getGameData(id);
     console.log(game);
-
+    this.state = "game"
     /**
      * So we got the game data here. What should we do next?
      * 
