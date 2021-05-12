@@ -12,6 +12,7 @@ export class DbServiceService {
   store;
   roomInfo = <any>{};
   unsubscribe;
+  playerName = window.localStorage.getItem("playerName");
   constructor(private globalService: GlobalService) { 
     
   }
@@ -46,17 +47,21 @@ export class DbServiceService {
   }
 
   async createRoomRemote(roomid, hostid, type) {
-    const customConfig: Config = {
-      dictionaries: [adjectives, animals],
-      separator: ' ',
-      length: 2,
-    };
-    const shortName: string = uniqueNamesGenerator(customConfig); 
+    if (!this.playerName) {
+      const customConfig: Config = {
+        dictionaries: [adjectives, animals],
+        separator: ' ',
+        length: 2,
+      };
+      const shortName: string = uniqueNamesGenerator(customConfig); 
+      window.localStorage.setItem("playerName", shortName);
+      this.playerName = shortName;
+    }
     await this.db.collection('rooms').doc(roomid).set({
       host: hostid,
       players: [{
         id: hostid,
-        name: shortName,
+        name: this.playerName,
         isHustler: false,
         eliminated: false,
         voted: false,
@@ -67,7 +72,7 @@ export class DbServiceService {
       state: 0,
       timeToReveal: false,
       private: true,
-      messages: [{text: 'Please wait and talk amongst yourselves', sender: shortName, type: 0}],
+      messages: [{text: 'Please wait and talk amongst yourselves', sender: this.playerName, type: 0}],
       created: new Date().toISOString(),
       timerStarted: false,
       revealAnswer: false,
@@ -84,16 +89,20 @@ export class DbServiceService {
     let roomData = await this.db.collection('rooms').doc(roomcode).get();
     let players = roomData.data().players;
     let state = roomData.data().state;
-    const customConfig: Config = {
-      dictionaries: [adjectives, animals],
-      separator: ' ',
-      length: 2,
-    };
-    const shortName: string = uniqueNamesGenerator(customConfig); 
+    if (!this.playerName) {
+      const customConfig: Config = {
+        dictionaries: [adjectives, animals],
+        separator: ' ',
+        length: 2,
+      };
+      const shortName: string = uniqueNamesGenerator(customConfig); 
+      window.localStorage.setItem("playerName", shortName);
+      this.playerName = shortName;
+    }
     this.globalService.publishData({key: 'wheretogo', value: roomData.data().gameType});
     let playerObj = {
       id: playerid,
-      name: shortName,
+      name: this.playerName,
       isHustler: false,
       eliminated: state != 0 ? true : false,
       voted: false,
@@ -265,5 +274,20 @@ export class DbServiceService {
 
   unsubscribeFromRoom() {
     this.unsubscribe();                                                                                                                                                                  
+  }
+
+  async getGameData(id) {
+    let snapshot = await this.db.collection('categories').doc(id).collection('games').get();
+    let limit = snapshot.size;
+
+    let randomIndex = Math.floor(Math.random() * (limit - 1));
+    for (var i = 0; i < snapshot.docs.length; i++) {
+      const doc = snapshot.docs[i]
+      let temp = doc.data();
+      if (i == randomIndex) {
+        return temp;
+          break
+      }
+    }
   }
 }

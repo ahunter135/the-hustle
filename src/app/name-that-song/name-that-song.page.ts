@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { OneSignal } from '@ionic-native/onesignal/ngx';
 import { LoadingController, Platform } from '@ionic/angular';
+import { DbServiceService } from '../services/db-service.service';
 
 @Component({
   selector: 'app-name-that-song',
@@ -12,7 +13,7 @@ import { LoadingController, Platform } from '@ionic/angular';
 export class NameThatSongPage implements OnInit {
   loader;
   state = "home";
-  constructor(public loadingController: LoadingController, private platform: Platform, private admob: AdMob, private router: Router, private onesignal: OneSignal) { }
+  constructor(public loadingController: LoadingController, private platform: Platform, private admob: AdMob, private router: Router, private onesignal: OneSignal, private dbService: DbServiceService) { }
 
   async ngOnInit() {
    
@@ -37,27 +38,21 @@ export class NameThatSongPage implements OnInit {
     await this.loader.dismiss();
   }
 
-  /**
-   * What to solve:
-   * - How to get game data from Deezer api
-   *    Should it be from firebase or straight http calls?
-   * - If straight http calls, how would I store player data to firebase for future?
-   * - If firebase, how would I get the http calls onto firebase?
-   * 
-   * I also want to add https://ionicframework.com/docs/native/speech-recognition for players to answer.
-   * Think song quiz but on a mobile app instead of Alexa
-   */
   async getGameData(id) {
-    // call firebase and get a random game within the category of id
-    //format: categories/{id}/games/{get random game here}
-    // deezer api is: 
-    // https://api.deezer.com/radio/{radio_id}/tracks
-    // alt = 30781, rock = 30891, rap = 42302, pop = 31061
+    let game = await this.dbService.getGameData(id);
+    console.log(game);
+
+    /**
+     * So we got the game data here. What should we do next?
+     * 
+     * Display the opponent. Display their name. (this.dbService.playerName);
+     */
   }
   
   async cancel() {
     /**
-     * Add an "Are you sure?" button here
+     * Add an "Are you sure?" popup button here. See Docs.
+     * If they are sure, call the below function. If they say no, do nothing
      */
     await this.showAdAndLeave();
   }
