@@ -25,6 +25,9 @@ export class NameThatSongPage implements OnInit {
   waveAnimation;
   recording = false;
   timer;
+  gameData;
+  round = 1;
+  currentSong;
   constructor(public loadingController: LoadingController, private platform: Platform, private admob: AdMob, private router: Router, private onesignal: OneSignal, private dbService: DbServiceService,
     private speechRecognition: SpeechRecognition) { }
 
@@ -44,10 +47,22 @@ export class NameThatSongPage implements OnInit {
         if (this.timer <= 0) {
           clearInterval(myfunc);
           this.state = 'song-playing';
+          this.stateChanged();
         }
       }.bind(this), 1000)
     } else if (this.state == 'song-playing') {
-
+      this.currentSong = new Audio(this.gameData.tracks[this.round - 1].link);
+      this.currentSong.play();
+      this.timer = 12;
+      var myfunc = setInterval(function() {
+        this.timer = this.timer - 1;
+        if (this.timer <= 0) {
+          clearInterval(myfunc);
+          this.currentSong.pause();
+          this.state = 'song-stopped';
+          this.stateChanged();
+        }
+      }.bind(this), 1000)
     } else if (this.state == 'song-stopped') {
       this.waveAnimation.stop();
     }
@@ -57,7 +72,7 @@ export class NameThatSongPage implements OnInit {
     animationItem.resize();
     if (animationItem.name == 'wave') {
       this.waveAnimation = animationItem;
-      animationItem.play();
+      this.waveAnimation.play();
     }
   }
 
@@ -81,8 +96,8 @@ export class NameThatSongPage implements OnInit {
   }
 
   async getGameData(id) {
-    let game = await this.dbService.getGameData(id);
-    console.log(game);
+    this.gameData = await this.dbService.getGameData(id);
+    console.log(this.gameData);
     this.state = "countdown"
     this.stateChanged();
     /**
