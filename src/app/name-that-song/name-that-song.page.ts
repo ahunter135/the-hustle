@@ -33,6 +33,10 @@ export class NameThatSongPage implements OnInit {
   answer;
   image;
   matches;
+  currentGameObj = {
+    player: {},
+    tracks: {}
+  }
   /**
    * the gimmick will be that as the player answers, we will store if they got it right or wrong like so, 0 = wrong, 1 = right.
    * Then when the game is over, send the object to the backend like so
@@ -148,6 +152,7 @@ export class NameThatSongPage implements OnInit {
 
   async getGameData(id) {
     this.gameData = await this.dbService.getGameData(id);
+    this.currentGameObj.tracks = this.gameData.tracks;
     console.log(this.gameData);
     this.state = "countdown"
     this.stateChanged();
@@ -186,8 +191,7 @@ export class NameThatSongPage implements OnInit {
     this.speechRecognition.startListening({
       language: 'EN-US',
       matches: 3,
-      showPopup: this.platform.is('android') ? false : null,
-      showPartial: true
+      showPopup: this.platform.is('android') ? false : null
     })
     .subscribe(
       (matches: string[])=> {
@@ -259,6 +263,16 @@ export class NameThatSongPage implements OnInit {
     clearInterval(this.interval);
     this.state = 'song-playing';
     this.stateChanged();
+  }
+
+  capitilizePlayerNames(name) {
+    const words = name.split(" ");
+
+    for (let i = 0; i < words.length; i++) {
+        words[i] = words[i][0].toUpperCase() + words[i].substr(1);
+    }
+
+    return words.join(" ");
   }
 
   showAdAndLeave() {

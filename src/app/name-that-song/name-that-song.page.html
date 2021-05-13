@@ -62,10 +62,8 @@
         & Artist into your
         microphone using the format "-Song Title- by -Artist-"</span>
       <br>
-      <span style="display: flex; justify-content: center; font-size: 15px;">This is what I understood: <br> <span
-          *ngFor="let match of matches">{{match}}</span>
-        <ion-progress-bar color="secondary" *ngIf="timer > 0 && state == 'song-stopped'" value="{{(timer / 10)}}">
-        </ion-progress-bar>
+      <ion-progress-bar color="secondary" *ngIf="timer > 0 && state == 'song-stopped'" value="{{(timer / 10)}}">
+      </ion-progress-bar>
     </ion-card-content>
   </ion-card>
   <ion-card color="primary" *ngIf="state == 'round-results'">
@@ -75,7 +73,7 @@
     </ion-card-header>
     <ion-card-content>
       {{answer}}
-      <img src="gameData.tracks[round - 1].image">
+      <img [src]="gameData.tracks[round - 1].image">
       <br>
       <ion-button color="secondary" (click)="next()">Next</ion-button>
     </ion-card-content>
