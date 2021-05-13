@@ -3,8 +3,10 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, ModalController, Platform, ToastController } from '@ionic/angular';
 import { HelpComponent } from '../modals/help/help.component';
+import { DbServiceService } from '../services/db-service.service';
 import { GlobalService } from '../services/global.service';
 import { StorageServiceService } from '../services/storage-service.service';
+import { uniqueNamesGenerator, Config, adjectives, colors, animals } from 'unique-names-generator';
 
 @Component({
   selector: 'app-home',
@@ -16,7 +18,7 @@ export class HomePage {
   roomcode;
   constructor(private storage: StorageServiceService, private router: Router, private modalCtrl: ModalController,
     private admob: AdMob, private platform: Platform, private toastCtrl: ToastController, private alertCtrl: AlertController,
-    private globalService: GlobalService) {}
+    private globalService: GlobalService, private dbService: DbServiceService) {}
 
   async ngOnInit() {
     this.globalService.getObservable().subscribe(async (data) => {
@@ -42,7 +44,16 @@ export class HomePage {
         {
           text: 'Name that Song',
           handler: async () => {
-            
+            if (!this.dbService.playerName) {
+              const customConfig: Config = {
+                dictionaries: [adjectives, colors, animals],
+                separator: ' ',
+                length: 3,
+              };
+              const shortName: string = uniqueNamesGenerator(customConfig); 
+              window.localStorage.setItem("playerName", shortName);
+              this.dbService.playerName = shortName;
+            }
             this.router.navigateByUrl("/name-that-song", {
               replaceUrl: true
             })
