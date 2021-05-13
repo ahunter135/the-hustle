@@ -41,6 +41,7 @@
     "moment": "^2.29.1",
     "ngx-lottie": "^6.4.0",
     "rxjs": "~6.5.5",
+    "string-similarity": "^4.0.4",
     "tslib": "^2.0.0",
     "unique-names-generator": "^4.3.1",
     "zone.js": "~0.10.3"
@@ -98,11 +99,14 @@
       "cordova-plugin-androidx-adapter": {},
       "cordova-admob-plus": {
         "APP_ID_IOS": "ca-app-pub-8417638044172769~9623606325",
-        "APP_ID_ANDROID": "ca-app-pub-8417638044172769~7722958025"
+        "APP_ID_ANDROID": "ca-app-pub-8417638044172769~7722958025",
+        "PLAY_SERVICES_VERSION": "19.5.0"
       },
       "cordova-clipboard": {},
       "onesignal-cordova-plugin": {},
-      "cordova-launch-review": {},
+      "cordova-launch-review": {
+        "ANDROID_PLAY_SERVICES_CORE_VERSION": "1.8.0"
+      },
       "cordova-plugin-media": {},
       "cordova-plugin-file": {},
       "cordova-plugin-speechrecognition": {}
