@@ -79,7 +79,7 @@ export class NameThatSongPage implements OnInit {
 
   async ngOnInit() {
     if (this.state == 'home') {
-      this.readInstrctions("15 seconds of a song from the selected genre will play. Guess the name and artist of the song by saying it after clicking the microphone button");
+      //this.readInstrctions("15 seconds of a song from the selected genre will play. Guess the name and artist of the song by saying it after clicking the microphone button");
     }
   }
 
@@ -94,7 +94,7 @@ export class NameThatSongPage implements OnInit {
   stateChanged() {
     this.speech.cancel();
     if (this.state == 'countdown') {
-      this.readInstrctions("Opponent found, you will be playing against " + this.gameData.player.name);
+      //this.readInstrctions("Opponent found, you will be playing against " + this.gameData.player.name);
       this.timer = 0
       this.interval = setInterval(function() {
         this.timer = this.timer + 1;
