@@ -92,7 +92,7 @@ export class NameThatSongPage implements OnInit {
   //TODO: When the state is "round-results", use the readInstructions function to let the user know if they got song, artist or both right. Also if the opponent got it right.
   // Tip: you can see if opponent got it right via the stateChanged function and you can see if the user got it right via the determineAnswerString function
   stateChanged() {
-    this.speech.cancel();
+    //this.speech.cancel();
     if (this.state == 'countdown') {
       //this.readInstrctions("Opponent found, you will be playing against " + this.gameData.player.name);
       this.timer = 0
