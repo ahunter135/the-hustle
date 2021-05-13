@@ -41,8 +41,16 @@
   </ion-card>
   <ion-card color="primary" *ngIf="state == 'song-playing' || state == 'countdown'">
     <ion-card-header>
-      <ion-card-subtitle>Playing as: </ion-card-subtitle>
-      <ion-card-subtitle>Playing against: </ion-card-subtitle>
+      <ion-card-subtitle>Playing as:
+        <ion-card-content>
+          <span style="text-transform: capitalize; font-size: 17px">{{player}}</span>
+        </ion-card-content>
+      </ion-card-subtitle>
+      <ion-card-title>Playing against:
+        <ion-card-content>
+          <div style="font-size: 30px; text-transform: capitalize;">{{opponent}}</div>
+        </ion-card-content>
+      </ion-card-title>
     </ion-card-header>
     <ion-card-content>
       <br>

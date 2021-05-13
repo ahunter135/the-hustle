@@ -29,6 +29,8 @@ export class NameThatSongPage implements OnInit {
   gameData;
   round = 1;
   currentSong;
+  player;
+  opponent;
   interval;
   answer;
   image;
@@ -154,6 +156,8 @@ export class NameThatSongPage implements OnInit {
     this.gameData = await this.dbService.getGameData(id);
     this.currentGameObj.tracks = this.gameData.tracks;
     console.log(this.gameData);
+    this.player = this.dbService.playerName;
+    this.opponent = this.gameData.player.name;
     this.state = "countdown"
     this.stateChanged();
     /**
