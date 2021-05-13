@@ -3,7 +3,7 @@ import firebase from 'firebase';
 import { GlobalService } from './global.service';
 import * as moment from 'moment';
 import { uniqueNamesGenerator, Config, adjectives, colors, animals } from 'unique-names-generator';
-
+import { v4 as uuidv4 } from 'uuid';
 @Injectable({
   providedIn: 'root'
 })
@@ -13,6 +13,7 @@ export class DbServiceService {
   roomInfo = <any>{};
   unsubscribe;
   playerName = window.localStorage.getItem("playerName");
+  currentSongGenre;
   constructor(private globalService: GlobalService) { 
     
   }
@@ -277,11 +278,19 @@ export class DbServiceService {
   }
 
   async getGameData(id) {
+    this.currentSongGenre = id;
     let snapshot = await this.db.collection('categories').doc(id).collection('games').get();
     let limit = snapshot.size;
 
     let randomIndex = Math.floor(Math.random() * (limit - 1));
     const doc = snapshot.docs[randomIndex]
     return doc.data();
+  }
+
+  async saveGameData(data) {
+    await this.db.collection('categories').doc(this.currentSongGenre).collection('games').doc(uuidv4()).set({
+      tracks: data.tracks,
+      player: data.player
+    })
   }
 }

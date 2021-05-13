@@ -132,6 +132,14 @@ export class NameThatSongPage implements OnInit {
       this.up();
       if (this.gameData.player.correctAnswers.song[this.round - 1]) this.score.opp++;
       if (this.gameData.player.correctAnswers.artist[this.round - 1]) this.score.opp++;
+    } else if (this.state == 'game-over') {
+      // Save this game to the DB
+      this.dbService.saveGameData(this.gameData);
+
+      //TODO Display who won. Put it all in the "Game Over" card
+      /**
+       * You can see the score via: this.score.opp & this.score.you
+       */
     }
   }
 
@@ -283,6 +291,7 @@ export class NameThatSongPage implements OnInit {
   
   async cancel() {
     /**
+     * TODO
      * Add an "Are you sure?" popup button here. See Docs.
      * If they are sure, call the below function. If they say no, do nothing
      */
@@ -295,7 +304,9 @@ export class NameThatSongPage implements OnInit {
 
     if (this.round == 6) {
       //Game OVer
-      console.log(this.currentGameObj);
+      clearInterval(this.interval);
+      this.state = 'game-over';
+      this.stateChanged();
     } else {
       this.round++;
       clearInterval(this.interval);
