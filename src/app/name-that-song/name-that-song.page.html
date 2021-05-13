@@ -35,9 +35,6 @@
         <ion-item color="primary" button (click)="pickCategory('pop')">
           Pop
         </ion-item>
-        <ion-item color="primary" button (click)="pickCategory('rap')">
-          Rap
-        </ion-item>
       </ion-list>
     </ion-card-content>
   </ion-card>
@@ -47,7 +44,8 @@
       <ion-card-subtitle>Playing against: </ion-card-subtitle>
     </ion-card-header>
     <ion-card-content>
-      <span *ngIf="timer > 0 && state == 'countdown'" style="text-align: center; font-size: 40px;">{{timer}}</span>
+      <span *ngIf="timer > 0 && state == 'countdown'"
+        style="display: flex; justify-content: center; font-size: 40px;">{{timer}}</span>
     </ion-card-content>
   </ion-card>
 

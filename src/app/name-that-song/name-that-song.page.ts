@@ -73,9 +73,15 @@ export class NameThatSongPage implements OnInit {
         }
       }.bind(this), 1000)
     } else if (this.state == 'song-playing') {
-      this.currentSong = new Audio(this.gameData.tracks[this.round - 1].link);
-      this.currentSong.play();
-      this.timer = 12;
+      try {
+        this.currentSong = new Audio(this.gameData.tracks[this.round - 1].link);
+        this.currentSong.play();
+      } catch (error) {
+        // something went wrong, more than likely no link is available
+        // do something to fix this..
+      }
+      
+      this.timer = 15;
       var myfunc = setInterval(function() {
         this.timer = this.timer - 1;
         if (this.timer <= 0) {
@@ -87,6 +93,10 @@ export class NameThatSongPage implements OnInit {
       }.bind(this), 1000)
     } else if (this.state == 'song-stopped') {
       this.waveAnimation.stop();
+      this.currentSong.pause();
+      if (this.recording) {
+        // song didn't finish, user interrupted.
+      }
     }
   }
 
@@ -155,6 +165,8 @@ export class NameThatSongPage implements OnInit {
    }
 
    async startListening() {
+    this.state = 'song-stopped';
+    this.stateChanged();
     this.speechRecognition.startListening({
       language: 'EN-US',
       matches: 2,
@@ -167,7 +179,7 @@ export class NameThatSongPage implements OnInit {
 
    async up() {
     this.recording = false;
-    this.speechRecognition.stopListening()
+    this.speechRecognition.stopListening();
    }
   
   async cancel() {
