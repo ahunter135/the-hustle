@@ -49,9 +49,9 @@ export class DbServiceService {
   async createRoomRemote(roomid, hostid, type) {
     if (!this.playerName) {
       const customConfig: Config = {
-        dictionaries: [adjectives, animals],
+        dictionaries: [adjectives, colors, animals],
         separator: ' ',
-        length: 2,
+        length: 3,
       };
       const shortName: string = uniqueNamesGenerator(customConfig); 
       window.localStorage.setItem("playerName", shortName);
@@ -91,9 +91,9 @@ export class DbServiceService {
     let state = roomData.data().state;
     if (!this.playerName) {
       const customConfig: Config = {
-        dictionaries: [adjectives, animals],
+        dictionaries: [adjectives, colors, animals],
         separator: ' ',
-        length: 2,
+        length: 3,
       };
       const shortName: string = uniqueNamesGenerator(customConfig); 
       window.localStorage.setItem("playerName", shortName);

@@ -8,11 +8,6 @@
     <ion-title color="dark" style="font-family: 'picas';">
       The Hustle
     </ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="copyToClipboard()" color="dark">
-        <ion-icon slot="icon-only" name="share-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -26,8 +21,14 @@
     </ion-card-header>
     <ion-card-content>
       <ion-list>
-        <ion-item color="primary" button (click)="pickCategory('indie')">
-          Alternative
+        <ion-item color="primary" button (click)="pickCategory('80')">
+          The '80s
+        </ion-item>
+        <ion-item color="primary" button (click)="pickCategory('70')">
+          The '70s
+        </ion-item>
+        <ion-item color="primary" button (click)="pickCategory('chart')">
+          Top Charts
         </ion-item>
         <ion-item color="primary" button (click)="pickCategory('rock')">
           Rock
@@ -35,35 +36,64 @@
         <ion-item color="primary" button (click)="pickCategory('pop')">
           Pop
         </ion-item>
-        <ion-item color="primary" button (click)="pickCategory('rap')">
-          Rap
-        </ion-item>
       </ion-list>
     </ion-card-content>
   </ion-card>
   <ion-card color="primary" *ngIf="state == 'song-playing' || state == 'countdown'">
     <ion-card-header>
-      <ion-card-subtitle>Playing as: 
+      <ion-card-subtitle>Playing as:
         <ion-card-content>
           <span style="text-transform: capitalize; font-size: 17px">{{player}}</span>
         </ion-card-content>
       </ion-card-subtitle>
-      <ion-card-title>Playing against: 
+      <ion-card-title>Playing against:
         <ion-card-content>
           <div style="font-size: 30px; text-transform: capitalize;">{{opponent}}</div>
         </ion-card-content>
       </ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <span *ngIf="timer > 0 && state == 'countdown'" style="text-align: center; font-size: 40px;">{{timer}}</span>
+      <br>
+      <ion-progress-bar color="secondary" *ngIf="timer > 0 && state == 'countdown'" value="{{(timer / 5)}}">
+      </ion-progress-bar>
+      <ion-progress-bar color="secondary" *ngIf="timer > 0 && state == 'song-playing'" value="{{(timer / 15)}}">
+      </ion-progress-bar>
+    </ion-card-content>
+  </ion-card>
+  <ion-card color="primary" *ngIf="state == 'song-stopped'">
+    <ion-card-header>
+      <ion-card-subtitle>Playing as: </ion-card-subtitle>
+      <ion-card-subtitle>Playing against: </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <span style="display: flex; justify-content: center; font-size: 20px;">Press the microphone and say the Song Title
+        & Artist into your
+        microphone using the format "-Song Title- by -Artist-"</span>
+      <br>
+      <ion-progress-bar color="secondary" *ngIf="timer > 0 && state == 'song-stopped'" value="{{(timer / 10)}}">
+      </ion-progress-bar>
+    </ion-card-content>
+  </ion-card>
+  <ion-card color="primary" *ngIf="state == 'round-results'">
+    <ion-card-header>
+      <ion-card-subtitle>Song: {{gameData.tracks[round-1].title}}</ion-card-subtitle>
+      <ion-card-subtitle>Artist: {{gameData.tracks[round-1].artist}}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      {{answer}}
+      <img [src]="gameData.tracks[round - 1].image">
+      <br>
+      <ion-button color="secondary" (click)="next()">Next</ion-button>
     </ion-card-content>
   </ion-card>
 
   <ion-fab vertical="bottom" horizontal="center">
-    <ion-fab-button (click)="down()" *ngIf="!recording">
+    <ion-fab-button (click)="down()" *ngIf="!recording"
+      [disabled]="!(state == 'song-playing' || state == 'song-stopped')">
       <ion-icon name="mic"></ion-icon>
     </ion-fab-button>
-    <ion-fab-button (click)="up()" *ngIf="recording" color="danger">
+    <ion-fab-button (click)="up()" *ngIf="recording" color="danger"
+      [disabled]="!(state == 'song-playing' || state == 'song-stopped')">
       <ion-icon name="mic-off"></ion-icon>
     </ion-fab-button>
   </ion-fab>
