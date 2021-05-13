@@ -31,6 +31,7 @@ export class NameThatSongPage implements OnInit {
   gameData;
   round = 1;
   currentSong;
+  speech;
   player;
   opponent;
   interval;
@@ -78,7 +79,7 @@ export class NameThatSongPage implements OnInit {
 
   async ngOnInit() {
     if (this.state == 'home') {
-      this.readInstrctions();
+      this.readInstrctions("15 seconds of a song from the selected genre will play. Guess the name and artist of the song by saying it after clicking the microphone button");
     }
   }
 
@@ -88,8 +89,12 @@ export class NameThatSongPage implements OnInit {
    * When moving to count down, set timer and start it.
    * 
    */
+  //TODO: When the state is "round-results", use the readInstructions function to let the user know if they got song, artist or both right. Also if the opponent got it right.
+  // Tip: you can see if opponent got it right via the stateChanged function and you can see if the user got it right via the determineAnswerString function
   stateChanged() {
+    this.speech.cancel();
     if (this.state == 'countdown') {
+      this.readInstrctions("Opponent found, you will be playing against " + this.gameData.player.name);
       this.timer = 0
       this.interval = setInterval(function() {
         this.timer = this.timer + 1;
@@ -169,29 +174,22 @@ export class NameThatSongPage implements OnInit {
     await this.loader.dismiss();
   }
 
-  async readInstrctions() {
+  async readInstrctions(message) {
     const speech = new Speech();
     speech.setRate(.85);
     speech.setVolume(.5);
     speech.setSplitSentences(false);
     console.log(speech);
     speech.speak({
-      text: "A 6 second segment of a song from the selected genre will play.Guess the name and artist of the song by saying it after clickingthe button at the bottom of the screen.",
+      text: message,
       queue: false,
       listeners: {
         onstart: () => {
-          console.log("Start utterance");
         },
         onend: () => {
-          console.log("End utterance");
         },
         onboundary: event => {
-          console.log(
-            event.name +
-              " boundary reached after " +
-              event.elapsedTime +
-              " milliseconds."
-          );
+          
         }
       }
     })
