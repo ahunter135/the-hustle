@@ -169,6 +169,7 @@ export class NameThatSongPage implements OnInit {
   async getGameData(id) {
     this.gameData = await this.dbService.getGameData(id);
     this.currentGameObj.tracks = this.gameData.tracks;
+    this.currentGameObj.player.name = this.dbService.playerName;
     console.log(this.gameData);
     this.player = this.dbService.playerName;
     this.opponent = this.gameData.player.name;
@@ -253,16 +254,24 @@ export class NameThatSongPage implements OnInit {
    determineAnswerString(song, artist) {
     if (song || artist) {
       if (song && artist) {
+        this.gotSong = true;
+        this.gotArtist = true;
         this.score.you += 2;
         this.answer = "You got the song and artist correct!";
       } else if (song) {
+        this.gotSong = true;
+        this.gotArtist = false;
         this.score.you += 1;
         this.answer = "You got the song correct!";
       } else if (artist) {
+        this.gotSong = false;
+        this.gotArtist = true;
         this.score.you += 1;
         this.answer = "You got the artist correct!";
       }
     } else {
+      this.gotSong = false;
+      this.gotArtist = false;
       this.answer = "You got neither correct."
     }
    }
