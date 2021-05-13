@@ -171,25 +171,10 @@ export class NameThatSongPage implements OnInit {
 
   async readInstrctions() {
     const speech = new Speech();
-    speech.init({
-      volume: .4,
-      lang: 'en-US',
-      rate: 1,
-      pitch: 1,
-      splitSentences: true,
-      listeners: {
-        onvoiceschanged: (voices) => {
-            console.log("Event voiceschanged", voices)
-          }
-      }
-    })
-      // checks if browser is supported
-      .then(data => {
-        console.log("Speech is ready", data);
-      })
-      .catch(e => {
-        console.error("An error occured while initializing : ", e);
-    });
+    speech.setRate(.85);
+    speech.setVolume(.5);
+    speech.setSplitSentences(false);
+    console.log(speech);
     speech.speak({
       text: "A 6 second segment of a song from the selected genre will play.Guess the name and artist of the song by saying it after clickingthe button at the bottom of the screen.",
       queue: false,
