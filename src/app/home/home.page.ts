@@ -45,23 +45,27 @@ export class HomePage {
         {
           text: 'Name that Song',
           handler: async () => {
-            if (!this.dbService.playerName) {
-              const customConfig: Config = {
-                dictionaries: [adjectives, colors, animals],
-                separator: ' ',
-                length: 3,
-              };
-              const shortName: string = uniqueNamesGenerator(customConfig); 
-              window.localStorage.setItem("playerName", shortName);
-              this.dbService.playerName = shortName;
-            }
-            let isAvailable = await this.speechRecognition.isRecognitionAvailable();
-            if (isAvailable) {
-              let hasPermission = await this.speechRecognition.hasPermission();
+            console.log("1");
+            if (this.platform.is('cordova')) { 
+              console.log(2);
+              if (!this.dbService.playerName) {
+                const customConfig: Config = {
+                  dictionaries: [adjectives, colors, animals],
+                  separator: ' ',
+                  length: 3,
+                };
+                const shortName: string = uniqueNamesGenerator(customConfig); 
+                window.localStorage.setItem("playerName", shortName);
+                this.dbService.playerName = shortName;
+              }
+              let isAvailable = await this.speechRecognition.isRecognitionAvailable();
+              if (isAvailable) {
+                let hasPermission = await this.speechRecognition.hasPermission();
 
-              if (!hasPermission) {
-                // Request permissions
-                this.speechRecognition.requestPermission()
+                if (!hasPermission) {
+                  // Request permissions
+                  this.speechRecognition.requestPermission()
+                }
               }
             }
             this.router.navigateByUrl("/name-that-song", {

@@ -38,9 +38,21 @@ export class NameThatSongPage implements OnInit {
   image;
   matches;
   currentGameObj = {
-    player: {},
+    player: {
+      name: "",
+      correctAnswers: {
+        song: [],
+        artist: []
+      }
+    },
     tracks: {}
   }
+  score = {
+    you: 0,
+    opp: 0
+  }
+  gotSong = false;
+  gotArtist = false;
   /**
    * the gimmick will be that as the player answers, we will store if they got it right or wrong like so, 0 = wrong, 1 = right.
    * Then when the game is over, send the object to the backend like so
@@ -124,6 +136,16 @@ export class NameThatSongPage implements OnInit {
       }.bind(this), 1000)
     } else if (this.state == 'round-results') {
       this.up();
+      if (this.gameData.player.correctAnswers.song[this.round - 1]) this.score.opp++;
+      if (this.gameData.player.correctAnswers.artist[this.round - 1]) this.score.opp++;
+    } else if (this.state == 'game-over') {
+      // Save this game to the DB
+      this.dbService.saveGameData(this.gameData);
+
+      //TODO Display who won. Put it all in the "Game Over" card
+      /**
+       * You can see the score via: this.score.opp & this.score.you
+       */
     }
   }
 
@@ -204,6 +226,7 @@ export class NameThatSongPage implements OnInit {
   async getGameData(id) {
     this.gameData = await this.dbService.getGameData(id);
     this.currentGameObj.tracks = this.gameData.tracks;
+    this.currentGameObj.player.name = this.dbService.playerName;
     console.log(this.gameData);
     this.player = this.dbService.playerName;
     this.opponent = this.gameData.player.name;
@@ -265,8 +288,9 @@ export class NameThatSongPage implements OnInit {
         clearInterval(this.interval);
         this.state = 'song-playing';
         this.stateChanged();
-        break;
+        return;
        }
+       matches[i] = matches[i].toLowerCase();
      }
 
      let isCorrect = await this.globalService.determineCorrectAnswer(this.gameData.tracks[this.round - 1], matches);
@@ -282,13 +306,24 @@ export class NameThatSongPage implements OnInit {
    determineAnswerString(song, artist) {
     if (song || artist) {
       if (song && artist) {
+        this.gotSong = true;
+        this.gotArtist = true;
+        this.score.you += 2;
         this.answer = "You got the song and artist correct!";
       } else if (song) {
+        this.gotSong = true;
+        this.gotArtist = false;
+        this.score.you += 1;
         this.answer = "You got the song correct!";
       } else if (artist) {
+        this.gotSong = false;
+        this.gotArtist = true;
+        this.score.you += 1;
         this.answer = "You got the artist correct!";
       }
     } else {
+      this.gotSong = false;
+      this.gotArtist = false;
       this.answer = "You got neither correct."
     }
    }
@@ -300,6 +335,7 @@ export class NameThatSongPage implements OnInit {
   
   async cancel() {
     /**
+     * TODO
      * Add an "Are you sure?" popup button here. See Docs.
      * If they are sure, call the below function. If they say no, do nothing
      */
@@ -307,12 +343,44 @@ export class NameThatSongPage implements OnInit {
   }
 
   async next() {
-    this.round++;
-    clearInterval(this.interval);
-    this.state = 'song-playing';
-    this.stateChanged();
+    this.currentGameObj.player.correctAnswers.song[this.round - 1] = this.gotSong ? 1 : 0;
+    this.currentGameObj.player.correctAnswers.artist[this.round - 1] = this.gotArtist ? 1 : 0;
+
+    if (this.round == 6) {
+      //Game OVer
+      clearInterval(this.interval);
+      this.state = 'game-over';
+      this.stateChanged();
+    } else {
+      this.round++;
+      clearInterval(this.interval);
+      this.state = 'song-playing';
+      this.stateChanged();
+    }
   }
 
+  async startOver() {
+    this.round = 1;
+    this.currentGameObj = {
+      player: {
+        name: "",
+        correctAnswers: {
+          song: [],
+          artist: []
+        }
+      },
+      tracks: {}
+    }
+    this.score = {
+      you: 0,
+      opp: 0
+    }
+    this.gotSong = false;
+    this.gotArtist = false;
+    clearInterval(this.interval);
+    this.state = 'home';
+    this.stateChanged
+  }
   capitilizePlayerNames(name) {
     const words = name.split(" ");
 
