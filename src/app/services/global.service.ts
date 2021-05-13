@@ -19,15 +19,15 @@ export class GlobalService {
   }
 
   determineCorrectAnswer(answer, guess) {
-    answer = answer.toLowerCase();
-    guess = guess.toLowerCase();
+    answer.title = answer.title.toLowerCase();
+    answer.artist = answer.artist.toLowerCase();
     let songMatch = stringSimilarity.findBestMatch(answer.title, guess);
     let artistMatch = stringSimilarity.findBestMatch(answer.artist, guess);
     let bestSongMatch = songMatch.bestMatch;
-    let bestArtistMatch = artistMatch.bestMatch.rating;
+    let bestArtistMatch = artistMatch.bestMatch;
 
-    bestSongMatch = this.isolateSong(answer.title, bestSongMatch.bestMatch.target);
-    bestArtistMatch = this.isolateArtist(answer.artist, bestArtistMatch.bestMatch.target)
+    bestSongMatch = this.isolateSong(answer.title, bestSongMatch.target);
+    bestArtistMatch = this.isolateArtist(answer.artist, bestArtistMatch.target)
     return {
       artist: bestArtistMatch >= 0.50,
       song: bestSongMatch >= 0.50
@@ -37,13 +37,13 @@ export class GlobalService {
   isolateSong(answer, guess) {
     let arr = guess.split(" by ");
 
-    return stringSimilarity.findBestMatch(answer, arr[0])
+    return stringSimilarity.compareTwoStrings(answer, arr[0])
   }
   isolateArtist(answer, guess) {
     let arr = guess.split(" by ");
 
     if (arr.length > 1)
-      return stringSimilarity.findBestMatch(answer, arr[1])
-    else return stringSimilarity.findBestMatch(answer, arr[0]);
+      return stringSimilarity.compareTwoStrings(answer, arr[1])
+    else return stringSimilarity.compareTwoStrings(answer, arr[0]);
   }
 }

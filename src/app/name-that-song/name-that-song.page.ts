@@ -36,9 +36,21 @@ export class NameThatSongPage implements OnInit {
   image;
   matches;
   currentGameObj = {
-    player: {},
+    player: {
+      name: "",
+      correctAnswers: {
+        song: [],
+        artist: []
+      }
+    },
     tracks: {}
   }
+  score = {
+    you: 0,
+    opp: 0
+  }
+  gotSong = false;
+  gotArtist = false;
   /**
    * the gimmick will be that as the player answers, we will store if they got it right or wrong like so, 0 = wrong, 1 = right.
    * Then when the game is over, send the object to the backend like so
@@ -118,6 +130,8 @@ export class NameThatSongPage implements OnInit {
       }.bind(this), 1000)
     } else if (this.state == 'round-results') {
       this.up();
+      if (this.gameData.player.correctAnswers.song[this.round - 1]) this.score.opp++;
+      if (this.gameData.player.correctAnswers.artist[this.round - 1]) this.score.opp++;
     }
   }
 
@@ -221,8 +235,9 @@ export class NameThatSongPage implements OnInit {
         clearInterval(this.interval);
         this.state = 'song-playing';
         this.stateChanged();
-        break;
+        return;
        }
+       matches[i] = matches[i].toLowerCase();
      }
 
      let isCorrect = await this.globalService.determineCorrectAnswer(this.gameData.tracks[this.round - 1], matches);
@@ -238,10 +253,13 @@ export class NameThatSongPage implements OnInit {
    determineAnswerString(song, artist) {
     if (song || artist) {
       if (song && artist) {
+        this.score.you += 2;
         this.answer = "You got the song and artist correct!";
       } else if (song) {
+        this.score.you += 1;
         this.answer = "You got the song correct!";
       } else if (artist) {
+        this.score.you += 1;
         this.answer = "You got the artist correct!";
       }
     } else {
@@ -263,10 +281,18 @@ export class NameThatSongPage implements OnInit {
   }
 
   async next() {
-    this.round++;
-    clearInterval(this.interval);
-    this.state = 'song-playing';
-    this.stateChanged();
+    this.currentGameObj.player.correctAnswers.song[this.round - 1] = this.gotSong ? 1 : 0;
+    this.currentGameObj.player.correctAnswers.artist[this.round - 1] = this.gotArtist ? 1 : 0;
+
+    if (this.round == 6) {
+      //Game OVer
+      console.log(this.currentGameObj);
+    } else {
+      this.round++;
+      clearInterval(this.interval);
+      this.state = 'song-playing';
+      this.stateChanged();
+    }
   }
 
   capitilizePlayerNames(name) {
