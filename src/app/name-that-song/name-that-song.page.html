@@ -17,9 +17,14 @@
   </ng-lottie>
   <ion-card color="primary" *ngIf="state == 'home'">
     <ion-card-header>
-      <ion-card-title>Pick a Category</ion-card-title>
+      <ion-card-title onload (load)="readInstructions()">Pick a Category</ion-card-title>
     </ion-card-header>
     <ion-card-content>
+      <p style="font-size: 16px; text-align: justify">
+        A 6 second segment of a song from the selected genre will play.
+        Guess the name and artist of the song by saying it after clicking
+        the button at the bottom of the screen.
+      </p>
       <ion-list>
         <ion-item color="primary" button (click)="pickCategory('80')">
           The '80s
