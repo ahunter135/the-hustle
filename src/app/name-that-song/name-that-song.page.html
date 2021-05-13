@@ -91,7 +91,9 @@
       <ion-button color="secondary" (click)="next()">Next</ion-button>
     </ion-card-content>
   </ion-card>
-
+  <ion-card *ngIf="state == 'game-over'">
+    <ion-button color="secondary" (click)="startOver()">Play Again</ion-button>
+  </ion-card>
   <ion-fab vertical="bottom" horizontal="center">
     <ion-fab-button (click)="down()" *ngIf="!recording"
       [disabled]="!(state == 'song-playing' || state == 'song-stopped')">

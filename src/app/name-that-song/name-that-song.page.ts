@@ -315,6 +315,28 @@ export class NameThatSongPage implements OnInit {
     }
   }
 
+  async startOver() {
+    this.round = 1;
+    this.currentGameObj = {
+      player: {
+        name: "",
+        correctAnswers: {
+          song: [],
+          artist: []
+        }
+      },
+      tracks: {}
+    }
+    this.score = {
+      you: 0,
+      opp: 0
+    }
+    this.gotSong = false;
+    this.gotArtist = false;
+    clearInterval(this.interval);
+    this.state = 'home';
+    this.stateChanged
+  }
   capitilizePlayerNames(name) {
     const words = name.split(" ");
 
