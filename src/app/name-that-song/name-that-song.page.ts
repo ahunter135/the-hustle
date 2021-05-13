@@ -7,6 +7,8 @@ import { DbServiceService } from '../services/db-service.service';
 import { AnimationOptions } from 'ngx-lottie';
 import { AnimationItem } from 'lottie-web';
 import { SpeechRecognition } from '@ionic-native/speech-recognition/ngx';
+import Speech from 'speak-tts';
+import { UseExistingWebDriver } from 'protractor/built/driverProviders';
 
 @Component({
   selector: 'app-name-that-song',
@@ -33,7 +35,11 @@ export class NameThatSongPage implements OnInit {
   constructor(public loadingController: LoadingController, private platform: Platform, private admob: AdMob, private router: Router, private onesignal: OneSignal, private dbService: DbServiceService,
     private speechRecognition: SpeechRecognition) { }
 
-  async ngOnInit() {}
+  async ngOnInit() {
+    if (this.state == 'home') {
+      this.readInstrctions();
+    }
+  }
 
   /**
    * Use this function to do any state specific stuff.
@@ -86,6 +92,49 @@ export class NameThatSongPage implements OnInit {
     await this.loader.dismiss();
   }
 
+  async readInstrctions() {
+    const speech = new Speech();
+    speech.init({
+      volume: .4,
+      lang: 'en-US',
+      rate: 1,
+      pitch: 1,
+      splitSentences: true,
+      listeners: {
+        onvoiceschanged: (voices) => {
+            console.log("Event voiceschanged", voices)
+          }
+      }
+    })
+      // checks if browser is supported
+      .then(data => {
+        console.log("Speech is ready", data);
+      })
+      .catch(e => {
+        console.error("An error occured while initializing : ", e);
+    });
+    speech.speak({
+      text: "A 6 second segment of a song from the selected genre will play.Guess the name and artist of the song by saying it after clickingthe button at the bottom of the screen.",
+      queue: false,
+      listeners: {
+        onstart: () => {
+          console.log("Start utterance");
+        },
+        onend: () => {
+          console.log("End utterance");
+        },
+        onboundary: event => {
+          console.log(
+            event.name +
+              " boundary reached after " +
+              event.elapsedTime +
+              " milliseconds."
+          );
+        }
+      }
+    })
+  }
+
   async presentLoading() {
     this.loader = await this.loadingController.create({
       message: 'Finding Player'
@@ -104,11 +153,6 @@ export class NameThatSongPage implements OnInit {
     this.opponent = this.gameData.player.name;
     this.state = "countdown"
     this.stateChanged();
-    /**
-     * So we got the game data here. What should we do next?
-     * 
-     * Display the opponent name. Display the name of current user. Hint: (this.dbService.playerName);
-     */
   }
    async down() {
      let isAvailable = await this.speechRecognition.isRecognitionAvailable();

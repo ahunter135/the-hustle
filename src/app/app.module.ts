@@ -18,6 +18,7 @@ import { LaunchReview } from '@ionic-native/launch-review/ngx';
 import { Media } from '@ionic-native/media/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { SpeechRecognition } from '@ionic-native/speech-recognition/ngx';
+import { TextToSpeech } from '@ionic-native/text-to-speech/ngx';
 
 var firebaseConfig = {
   apiKey: "AIzaSyCLTnNoAXOI3E13j_doKmRFM8gpkTl4yBM",
@@ -48,6 +49,7 @@ firebase.initializeApp(firebaseConfig);
     File,
     Media,
     SpeechRecognition,
+    TextToSpeech,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]
