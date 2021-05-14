@@ -8,8 +8,8 @@ import { AnimationOptions } from 'ngx-lottie';
 import { AnimationItem } from 'lottie-web';
 import { SpeechRecognition } from '@ionic-native/speech-recognition/ngx';
 import Speech from 'speak-tts';
-import { UseExistingWebDriver } from 'protractor/built/driverProviders';
 import { GlobalService } from '../services/global.service';
+import { TextToSpeech } from '@ionic-native/text-to-speech/ngx';
 
 @Component({
   selector: 'app-name-that-song',
@@ -75,11 +75,11 @@ export class NameThatSongPage implements OnInit {
    * @param speechRecognition 
    */
   constructor(public loadingController: LoadingController, private platform: Platform, private admob: AdMob, private router: Router, private onesignal: OneSignal, private dbService: DbServiceService,
-    private speechRecognition: SpeechRecognition, private globalService: GlobalService) { }
+    private speechRecognition: SpeechRecognition, private globalService: GlobalService, private tts: TextToSpeech) { }
 
   async ngOnInit() {
     if (this.state == 'home') {
-      //this.readInstrctions("15 seconds of a song from the selected genre will play. Guess the name and artist of the song by saying it after clicking the microphone button");
+      this.readInstrctions("15 seconds of a song from the selected genre will play. Guess the name and artist of the song by saying it after clicking the microphone button");
     }
   }
 
@@ -94,7 +94,7 @@ export class NameThatSongPage implements OnInit {
   stateChanged() {
     //this.speech.cancel();
     if (this.state == 'countdown') {
-      //this.readInstrctions("Opponent found, you will be playing against " + this.gameData.player.name);
+      this.readInstrctions("Opponent found, you will be playing against " + this.gameData.player.name);
       this.timer = 0
       this.interval = setInterval(function() {
         this.timer = this.timer + 1;
@@ -175,6 +175,14 @@ export class NameThatSongPage implements OnInit {
   }
 
   async readInstrctions(message) {
+    this.tts.speak({
+      text: message,
+      locale: 'en-US',
+      rate: 1
+    })
+  .then(() => console.log('Success'))
+  .catch((reason: any) => console.log(reason));
+    /*
     this.speech = new Speech();
     this.speech.init({
       volume: .4,
@@ -204,6 +212,7 @@ export class NameThatSongPage implements OnInit {
         }
       }
     })
+    */
   }
 
   async presentLoading() {

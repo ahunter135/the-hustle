@@ -9,6 +9,7 @@ import { NameThatSongPageRoutingModule } from './name-that-song-routing.module';
 import { NameThatSongPage } from './name-that-song.page';
 import { LottieModule } from 'ngx-lottie';
 import player from 'lottie-web';
+import { TextToSpeech } from '@ionic-native/text-to-speech/ngx';
 
 export function playerFactory() {
   return player;
@@ -20,6 +21,9 @@ export function playerFactory() {
     IonicModule,
     NameThatSongPageRoutingModule,
     LottieModule.forRoot({ player: playerFactory })
+  ],
+  providers: [
+    TextToSpeech
   ],
   declarations: [NameThatSongPage]
 })
