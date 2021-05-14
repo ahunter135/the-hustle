@@ -10,6 +10,7 @@ import { SpeechRecognition } from '@ionic-native/speech-recognition/ngx';
 import Speech from 'speak-tts';
 import { UseExistingWebDriver } from 'protractor/built/driverProviders';
 import { GlobalService } from '../services/global.service';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-name-that-song',
@@ -75,7 +76,7 @@ export class NameThatSongPage implements OnInit {
    * @param speechRecognition 
    */
   constructor(public loadingController: LoadingController, private platform: Platform, private admob: AdMob, private router: Router, private onesignal: OneSignal, private dbService: DbServiceService,
-    private speechRecognition: SpeechRecognition, private globalService: GlobalService) { }
+    private speechRecognition: SpeechRecognition, private globalService: GlobalService, private alertController: AlertController) { }
 
   async ngOnInit() {
     if (this.state == 'home') {
@@ -317,12 +318,27 @@ export class NameThatSongPage implements OnInit {
    }
   
   async cancel() {
-    /**
-     * TODO
-     * Add an "Are you sure?" popup button here. See Docs.
-     * If they are sure, call the below function. If they say no, do nothing
-     */
-    await this.showAdAndLeave();
+    // alert that asks user if they are sure
+    const alert = await this.alertController.create({
+      header: 'Are you sure?',
+      keyboardClose: true,
+      buttons: [
+        {
+          text: 'Yes',
+          role: 'go-back',
+        }, {
+          text: 'No',
+          role: 'stay'
+        }
+      ]
+    });
+    await alert.present();
+    let result = await alert.onDidDismiss();
+    // if yes, show ad and leave; if no nothing happens
+    if (result.role === 'go-back') {
+      await this.showAdAndLeave();
+    }
+    console.log(result);
   }
 
   async next() {
