@@ -21,6 +21,7 @@ export class GlobalService {
   determineCorrectAnswer(answer, guess) {
     answer.title = answer.title.toLowerCase();
     answer.artist = answer.artist.toLowerCase();
+    answer.title = answer.title.replace(/ *\([^)]*\) */g, ""); // remove any parenthesis song titles
     let songMatch = stringSimilarity.findBestMatch(answer.title, guess);
     let artistMatch = stringSimilarity.findBestMatch(answer.artist, guess);
     let bestSongMatch = songMatch.bestMatch;

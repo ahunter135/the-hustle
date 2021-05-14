@@ -8,9 +8,9 @@ import { AnimationOptions } from 'ngx-lottie';
 import { AnimationItem } from 'lottie-web';
 import { SpeechRecognition } from '@ionic-native/speech-recognition/ngx';
 import Speech from 'speak-tts';
-import { UseExistingWebDriver } from 'protractor/built/driverProviders';
 import { GlobalService } from '../services/global.service';
 import { AlertController, ToastController } from '@ionic/angular';
+import { TextToSpeech } from '@ionic-native/text-to-speech/ngx';
 
 @Component({
   selector: 'app-name-that-song',
@@ -77,7 +77,7 @@ export class NameThatSongPage implements OnInit {
    * @param speechRecognition 
    */
   constructor(public loadingController: LoadingController, private platform: Platform, private admob: AdMob, private router: Router, private onesignal: OneSignal, private dbService: DbServiceService,
-    private speechRecognition: SpeechRecognition, private globalService: GlobalService, private alertController: AlertController, private toastCtrl: ToastController) { }
+    private speechRecognition: SpeechRecognition, private globalService: GlobalService, private alertController: AlertController, private toastCtrl: ToastController, private tts: TextToSpeech) { }
 
   async ngOnInit() {
     if (this.state == 'home') {
@@ -102,6 +102,7 @@ export class NameThatSongPage implements OnInit {
       it would not take me back after clicking yes
     */
     //this.speech.cancel();
+    this.tts.stop();
     if (this.state == 'countdown') {
       this.readInstrctions("Opponent found, you will be playing against " + this.gameData.player.name);
       this.timer = 0
@@ -187,15 +188,13 @@ export class NameThatSongPage implements OnInit {
   }
 
   async readInstrctions(message) {
-    const speech = new Speech();
-    speech.setRate(.85);
-    speech.setVolume(.5);
-    speech.setSplitSentences(false);
-    console.log(speech);
-    speech.speak({
+    this.tts.speak({
       text: message,
-      queue: false,
+      locale: 'en-US',
+      rate: 1
     })
+    .then(() => console.log('Success'))
+    .catch((reason: any) => console.log(reason));
   }
 
   async presentLoading() {
