@@ -10,7 +10,7 @@ import { SpeechRecognition } from '@ionic-native/speech-recognition/ngx';
 import Speech from 'speak-tts';
 import { UseExistingWebDriver } from 'protractor/built/driverProviders';
 import { GlobalService } from '../services/global.service';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-name-that-song',
@@ -35,6 +35,7 @@ export class NameThatSongPage implements OnInit {
   speech;
   player;
   opponent;
+  winner;
   interval;
   answer;
   image;
@@ -76,7 +77,7 @@ export class NameThatSongPage implements OnInit {
    * @param speechRecognition 
    */
   constructor(public loadingController: LoadingController, private platform: Platform, private admob: AdMob, private router: Router, private onesignal: OneSignal, private dbService: DbServiceService,
-    private speechRecognition: SpeechRecognition, private globalService: GlobalService, private alertController: AlertController) { }
+    private speechRecognition: SpeechRecognition, private globalService: GlobalService, private alertController: AlertController, private toastCtrl: ToastController) { }
 
   async ngOnInit() {
     if (this.state == 'home') {
@@ -93,7 +94,14 @@ export class NameThatSongPage implements OnInit {
   //TODO: When the state is "round-results", use the readInstructions function to let the user know if they got song, artist or both right. Also if the opponent got it right.
   // Tip: you can see if opponent got it right via the stateChanged function and you can see if the user got it right via the determineAnswerString function
   stateChanged() {
-    this.speech.cancel();
+    /*
+      Found bug with speech.cancel(), actions wont take place when this method is called,
+      For example, when selecting a category it says finding player forever and never plays song
+      Tried to find out why but no clue. Github shows cancel just used speechSysthesis.cancel(), and
+      I don't know why that wouldn't work. Discovered by trying to put in cancel alert, but when did
+      it would not take me back after clicking yes
+    */
+    //this.speech.cancel();
     if (this.state == 'countdown') {
       this.readInstrctions("Opponent found, you will be playing against " + this.gameData.player.name);
       this.timer = 0
@@ -147,11 +155,14 @@ export class NameThatSongPage implements OnInit {
     } else if (this.state == 'game-over') {
       // Save this game to the DB
       this.dbService.saveGameData(this.gameData);
-
-      //TODO Display who won. Put it all in the "Game Over" card
-      /**
-       * You can see the score via: this.score.opp & this.score.you
-       */
+      // shows winner but swaps between last round's results and game over card
+      if (this.score.opp > this.score.you) {
+        this.winner = this.opponent;
+      }  else if (this.score.opp < this.score.you) {
+        this.winner = this.player;
+      }  else {
+        this.winner = 'It\'s a tie!';
+      }
     }
   }
 
@@ -184,15 +195,6 @@ export class NameThatSongPage implements OnInit {
     speech.speak({
       text: message,
       queue: false,
-      listeners: {
-        onstart: () => {
-        },
-        onend: () => {
-        },
-        onboundary: event => {
-          
-        }
-      }
     })
   }
 
@@ -255,12 +257,24 @@ export class NameThatSongPage implements OnInit {
       (onerror) => {
         //got error, show error and reset timer to let them try again
         // TODO: Show a toast message saying something went wrong, try again.
+        // I copied the showtoast from home, hope this is what you wanted
+        this.showToast('Something went wrong! Try again');
         clearInterval(this.interval);
         this.state = 'song-stopped';
         this.stateChanged();
       }
     )
    }
+
+   async showToast(message) {
+    const toast = await this.toastCtrl.create({
+      message: message,
+      position: 'bottom',
+      duration: 2000
+    });
+
+    toast.present();
+  }
 
    async gotAnswer(matches) {
     this.recording = false;
