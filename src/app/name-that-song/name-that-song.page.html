@@ -96,7 +96,12 @@
       <ion-button color="secondary" (click)="next()">Next</ion-button>
     </ion-card-content>
   </ion-card>
-  <ion-card *ngIf="state == 'game-over'">
+  <ion-card *ngIf="state == 'game-over'" color = "primary">
+    <ion-card-header>
+      <ion-card-subtitle>And The Winner is...</ion-card-subtitle>
+      <ion-card-subtitle>{{winner}}</ion-card-subtitle>
+      <br>
+    </ion-card-header>
     <ion-button color="secondary" (click)="startOver()">Play Again</ion-button>
   </ion-card>
   <ion-fab vertical="bottom" horizontal="center">
