@@ -94,14 +94,6 @@ export class NameThatSongPage implements OnInit {
   //TODO: When the state is "round-results", use the readInstructions function to let the user know if they got song, artist or both right. Also if the opponent got it right.
   // Tip: you can see if opponent got it right via the stateChanged function and you can see if the user got it right via the determineAnswerString function
   stateChanged() {
-    /*
-      Found bug with speech.cancel(), actions wont take place when this method is called,
-      For example, when selecting a category it says finding player forever and never plays song
-      Tried to find out why but no clue. Github shows cancel just used speechSysthesis.cancel(), and
-      I don't know why that wouldn't work. Discovered by trying to put in cancel alert, but when did
-      it would not take me back after clicking yes
-    */
-    //this.speech.cancel();
     this.tts.stop();
     if (this.state == 'countdown') {
       this.readInstrctions("Opponent found, you will be playing against " + this.gameData.player.name);
@@ -160,10 +152,12 @@ export class NameThatSongPage implements OnInit {
       if (this.score.opp > this.score.you) {
         this.winner = this.opponent;
       }  else if (this.score.opp < this.score.you) {
-        this.winner = this.player;
+        this.winner = "You";
       }  else {
         this.winner = 'It\'s a tie!';
       }
+
+      this.readInstrctions("And The Winner is... " + this.winner);
     }
   }
 
@@ -212,7 +206,6 @@ export class NameThatSongPage implements OnInit {
     this.gameData = await this.dbService.getGameData(id);
     this.currentGameObj.tracks = this.gameData.tracks;
     this.currentGameObj.player.name = this.dbService.playerName;
-    console.log(this.gameData);
     this.player = this.dbService.playerName;
     this.opponent = this.gameData.player.name;
     this.state = "countdown"
