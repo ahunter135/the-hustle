@@ -145,6 +145,9 @@ export class NameThatSongPage implements OnInit {
       this.up();
       if (this.gameData.player.correctAnswers.song[this.round - 1]) this.score.opp++;
       if (this.gameData.player.correctAnswers.artist[this.round - 1]) this.score.opp++;
+
+      let oppStr = this.gameData.player.correctAnswers.song[this.round - 1] && this.gameData.player.correctAnswers.artist[this.round - 1] ? this.gameData.player.name + " got both correct." : this.gameData.player.correctAnswers.song[this.round - 1] ? this.gameData.player.name + " got the song correct." : this.gameData.player.correctAnswers.artist[this.round - 1] ? this.gameData.player.name + " got the artist correct." : this.gameData.player.name + " got neither correct.";
+      this.readInstrctions((this.answer ? this.answer : 'You got neither correct') + ". " + oppStr);
     } else if (this.state == 'game-over') {
       // Save this game to the DB
       this.dbService.saveGameData(this.gameData);
@@ -286,7 +289,7 @@ export class NameThatSongPage implements OnInit {
      let isCorrect = await this.globalService.determineCorrectAnswer(this.gameData.tracks[this.round - 1], matches);
 
      console.log(isCorrect);
-     this.determineAnswerString(isCorrect.song, isCorrect.artist);
+     await this.determineAnswerString(isCorrect.song, isCorrect.artist);
 
      clearInterval(this.interval);
      this.state = 'round-results';
@@ -294,28 +297,32 @@ export class NameThatSongPage implements OnInit {
    }
 
    determineAnswerString(song, artist) {
-    if (song || artist) {
-      if (song && artist) {
-        this.gotSong = true;
-        this.gotArtist = true;
-        this.score.you += 2;
-        this.answer = "You got the song and artist correct!";
-      } else if (song) {
-        this.gotSong = true;
-        this.gotArtist = false;
-        this.score.you += 1;
-        this.answer = "You got the song correct!";
-      } else if (artist) {
+     return new Promise((resolve, reject) => {
+      if (song || artist) {
+        if (song && artist) {
+          this.gotSong = true;
+          this.gotArtist = true;
+          this.score.you += 2;
+          this.answer = "You got the song and artist correct!";
+        } else if (song) {
+          this.gotSong = true;
+          this.gotArtist = false;
+          this.score.you += 1;
+          this.answer = "You got the song correct!";
+        } else if (artist) {
+          this.gotSong = false;
+          this.gotArtist = true;
+          this.score.you += 1;
+          this.answer = "You got the artist correct!";
+        }
+      } else {
         this.gotSong = false;
-        this.gotArtist = true;
-        this.score.you += 1;
-        this.answer = "You got the artist correct!";
+        this.gotArtist = false;
+        this.answer = "You got neither correct."
       }
-    } else {
-      this.gotSong = false;
-      this.gotArtist = false;
-      this.answer = "You got neither correct."
-    }
+
+      resolve(true);
+     })
    }
 
    async up() {
@@ -397,6 +404,8 @@ export class NameThatSongPage implements OnInit {
   }
 
   showAdAndLeave() {
+    this.tts.stop();
+    this.currentSong.pause();
     if (!this.platform.is('cordova')) {
       this.router.navigateByUrl("/home", {
         replaceUrl: true
