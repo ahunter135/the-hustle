@@ -176,7 +176,7 @@ export class NameThatSongPage implements OnInit {
   async pickCategory(id) {
     // id is category string of firebase
     this.state = 'loading';
-    await this.presentLoading();
+    await this.presentLoading('Finding Player...');
     await this.getGameData(id);
     await this.loader.dismiss();
   }
@@ -191,9 +191,9 @@ export class NameThatSongPage implements OnInit {
     .catch((reason: any) => console.log(reason));
   }
 
-  async presentLoading() {
+  async presentLoading(message) {
     this.loader = await this.loadingController.create({
-      message: 'Finding Player'
+      message: message
     });
     await this.loader.present();
   }
@@ -403,7 +403,7 @@ export class NameThatSongPage implements OnInit {
       });
       return
     }
-    this.presentLoading();
+    this.presentLoading('Exiting Game...');
 
     this.admob.interstitial.load({
       id: {
